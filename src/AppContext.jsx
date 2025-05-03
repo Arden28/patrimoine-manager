@@ -73,10 +73,15 @@ const translations = {
     stayUpdated: 'Stay updated with recent activities',
     manageFamilyAccess: 'Manage access for family members',
     for: 'for',
-    invalidEmail: 'Please enter a valid email address',
-    invalidPassword: 'Please enter a password',
     noNotifications: 'No notifications available',
     personalInfo: 'Personal Info',
+    // Login
+    invalidEmail: 'Please enter a valid email address',
+    invalidPassword: 'Please enter a password',
+    accessYourPersonalFile: { en: 'Access your personal file', fr: 'Accédez à votre dossier personnel' },
+    signInWithGoogle: { en: 'Sign in with Google', fr: 'Se connecter avec Google' },
+    signInWithLinkedIn: { en: 'Sign in with LinkedIn', fr: 'Se connecter avec LinkedIn' },
+    forgotPassword: { en: 'Forgot Password?', fr: 'Mot de passe oublié ?' }
   },
   fr: {
     welcome: 'Bienvenue',
@@ -149,10 +154,10 @@ const translations = {
     stayUpdated: 'Restez informé des activités récentes',
     manageFamilyAccess: 'Gérez l’accès pour les membres de la famille',
     for: 'pour',
-    invalidEmail: 'Veuillez entrer une adresse email valide',
-    invalidPassword: 'Veuillez entrer un mot de passe',
     noNotifications: 'Aucune notification disponible',
     personalInfo: 'Informations Personnelles',
+    invalidEmail: 'Veuillez entrer une adresse email valide',
+    invalidPassword: 'Veuillez entrer un mot de passe',
   },
 };
 
