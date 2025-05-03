@@ -1,50 +1,162 @@
-import React from 'react';
-import DocumentVault from './DocumentVault';
+import React, { useState, useContext } from 'react';
 import Sidebar from './Sidebar';
+import Modal from './Modal';
+import Header from './Header';
+import { AppContext } from '../AppContext';
 
-const DocumentsPage = ({ user, assets, onUploadDocument, onLogout }) => {
+const DocumentsPage = ({ user, assets, onUploadDocument, onDeleteDocument, onLogout }) => {
+  const { t, setLanguage, setCurrency } = useContext(AppContext);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [selectedAssetId, setSelectedAssetId] = useState('');
+  const [selectedDocument, setSelectedDocument] = useState('');
+  const [file, setFile] = useState(null);
+
+  const handleUploadSubmit = (e) => {
+    e.preventDefault();
+    if (file && selectedAssetId && file.type === 'application/pdf') {
+      onUploadDocument(selectedAssetId, file.name);
+      setFile(null);
+      setSelectedAssetId('');
+      setIsUploadModalOpen(false);
+    } else {
+      alert(t('onlyPDF'));
+    }
+  };
+
+  const handleViewDocument = (document) => {
+    setSelectedDocument(document);
+    setIsViewModalOpen(true);
+  };
+
+  const handleDownloadDeclaration = () => {
+    alert(t('downloadDeclarationPlaceholder'));
+    // Placeholder: To be implemented with LaTeX PDF generation
+  };
+
+  const userName = user && typeof user.email === 'string' ? user.email.split('@')[0] : 'User';
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar activeLink="Documents" onLogout={onLogout} />
       <div className="flex-1 md:ml-64 p-6 lg:p-8">
-        <header className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Documents</h1>
-          <button onClick={onLogout} className="text-gray-600 hover:text-gray-800 transition-colors duration-200">
-            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-            </svg>
-          </button>
-        </header>
+      <Header onUserName={userName} onLogout={onLogout} onHandleDownloadDeclaration={handleDownloadDeclaration} />
         <div className="animate-fade-in">
           <div className="bg-white p-6 rounded-xl shadow-sm">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900">Document Vault</h2>
-              <DocumentVault assets={assets} onUploadDocument={onUploadDocument} />
+              <h2 className="text-2xl font-semibold text-gray-900">{t('documents')}</h2>
+              <button
+                onClick={() => setIsUploadModalOpen(true)}
+                className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+              >
+                {t('uploadDocument')}
+              </button>
             </div>
             <div className="space-y-4">
-              {assets.flatMap(asset =>
-                asset.documents.map(doc => (
-                  <div
-                    key={`${asset.id}-${doc}`}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-200 transform hover:-translate-y-1 shadow-sm"
-                  >
-                    <div className="flex-1">
-                      <p className="text-gray-900 font-medium">{doc}</p>
-                      <p className="text-sm text-gray-600">Asset: {asset.name}</p>
-                    </div>
-                    <div className="flex-1 text-right">
-                      <p className="text-sm text-gray-600">{new Date().toLocaleDateString()}</p>
-                    </div>
-                    <div className="flex-1 text-right">
-                      <button className="text-teal-500 hover:text-teal-600 font-medium">Download</button>
-                    </div>
-                  </div>
-                ))
-              )}
+              {assets.map(asset => (
+                <div key={asset.id} className="p-4 bg-gray-50 rounded-lg">
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">{asset.name}</h3>
+                  {asset.documents.length > 0 ? (
+                    asset.documents.map((document, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-3 bg-white rounded-lg hover:bg-gray-100 transition-all duration-200"
+                      >
+                        <div className="flex items-center">
+                          <svg className="h-5 w-5 text-teal-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                          </svg>
+                          <p className="text-gray-900">{document}</p>
+                        </div>
+                        <div className="space-x-2">
+                          <button
+                            onClick={() => handleViewDocument(document)}
+                            className="text-teal-500 hover:text-teal-600 font-medium"
+                          >
+                            {t('view')}
+                          </button>
+                          <button
+                            onClick={() => onDeleteDocument(asset.id, document)}
+                            className="text-red-500 hover:text-red-600 font-medium"
+                          >
+                            {t('delete')}
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-600">{t('noDocuments')}</p>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
+      {/* Upload Document Modal */}
+      <Modal isOpen={isUploadModalOpen} onClose={() => setIsUploadModalOpen(false)} title={t('uploadDocument')}>
+        <form onSubmit={handleUploadSubmit}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">{t('asset')}</label>
+            <select
+              value={selectedAssetId}
+              onChange={(e) => setSelectedAssetId(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
+              required
+            >
+              <option value="">{t('selectAsset')}</option>
+              {assets.map(asset => (
+                <option key={asset.id} value={asset.id}>{asset.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">{t('document')}</label>
+            <div className="mt-1 flex items-center justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-teal-500 transition-colors duration-200">
+              <div className="space-y-1 text-center">
+                <svg className="mx-auto h-12 w-12 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                </svg>
+                <div className="flex text-sm text-gray-600">
+                  <label
+                    htmlFor="file-upload"
+                    className="relative cursor-pointer bg-white rounded-md font-medium text-teal-500 hover:text-teal-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500"
+                  >
+                    <span>{t('uploadFile')}</span>
+                    <input
+                      id="file-upload"
+                      name="file-upload"
+                      type="file"
+                      accept="application/pdf"
+                      className="sr-only"
+                      onChange={(e) => setFile(e.target.files[0])}
+                      required
+                    />
+                  </label>
+                  <p className="pl-1">{t('orDragDrop')}</p>
+                </div>
+                <p className="text-xs text-gray-500">{t('pdfOnly')}</p>
+                {file && <p className="text-sm text-gray-900 mt-2">{file.name}</p>}
+              </div>
+            </div>
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
+          >
+            {t('uploadDocument')}
+          </button>
+        </form>
+      </Modal>
+      {/* View Document Modal */}
+      <Modal isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)} title={t('viewDocument')}>
+        <div className="p-4">
+          <p className="text-gray-600 mb-4">{t('pdfPreview')} {selectedDocument}</p>
+          <div className="bg-gray-100 p-4 rounded-lg">
+            <p className="text-gray-900">{t('pdfPlaceholder')} {selectedDocument}</p>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

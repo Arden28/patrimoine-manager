@@ -26,7 +26,7 @@ const Sidebar = ({ activeLink, onLogout }) => {
         </svg>
       </button>
       <div
-        className={`w-64 bg-navy-900 text-white shadow-lg fixed h-full z-10 transform transition-transform duration-300 ${
+        className={`w-64 bg-white text-gray-900 shadow-lg fixed h-full z-10 transform transition-transform duration-300 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
       >
@@ -35,8 +35,8 @@ const Sidebar = ({ activeLink, onLogout }) => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 9.143 15.714 12l2.286 6.857L12 15.714 6.286 18.857l2.286-6.857L3 9.143 8.286 6.857 11 3z"></path>
           </svg>
           <div>
-            <h1 className="text-xl font-bold">Patrimoine</h1>
-            <p className="text-sm text-gray-400">Wealth, Simplified</p>
+            <h1 className="text-xl font-bold text-gray-900">Patrimoine</h1>
+            <p className="text-sm text-gray-500">Wealth, Simplified</p>
           </div>
         </div>
         <nav className="mt-4">
@@ -45,8 +45,8 @@ const Sidebar = ({ activeLink, onLogout }) => {
               key={link.name}
               to={link.path}
               className={({ isActive }) =>
-                `flex items-center px-6 py-3 text-gray-200 hover:bg-navy-800 hover:text-white transition-all duration-200 ${
-                  isActive ? 'bg-navy-800 text-teal-400 border-l-4 border-teal-500' : ''
+                `flex items-center px-6 py-3 text-gray-900 hover:bg-gray-100 hover:text-teal-500 transition-all duration-200 ${
+                  isActive ? 'bg-gray-100 text-teal-500 border-l-4 border-teal-500' : ''
                 }`
               }
               onClick={() => setIsOpen(false)}
@@ -59,7 +59,7 @@ const Sidebar = ({ activeLink, onLogout }) => {
           ))}
           <button
             onClick={onLogout}
-            className="flex items-center px-6 py-3 text-gray-200 hover:bg-navy-800 hover:text-white transition-all duration-200 w-full text-left"
+            className="flex items-center px-6 py-3 text-gray-900 hover:bg-gray-100 hover:text-teal-500 transition-all duration-200 w-full text-left"
           >
             <svg className="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>

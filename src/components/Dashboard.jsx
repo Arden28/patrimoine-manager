@@ -1,202 +1,449 @@
-import React, { useEffect, useRef } from 'react';
-import Chart from 'chart.js/auto';
-import AssetForm from './AssetForm';
-import DebtForm from './DebtForm';
-import DocumentVault from './DocumentVault';
-import Notifications from './Notifications';
-import FamilySharing from './FamilySharing';
+import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from './Sidebar';
-import { Link } from 'react-router-dom';
+import Modal from './Modal';
+import { AppContext } from '../AppContext';
 
-const Dashboard = ({ user, assets, debts, notifications, familyMembers, onAddAsset, onAddDebt, onUploadDocument, onAddFamilyMember, onLogout }) => {
-  const netWorth = assets.reduce((sum, asset) => sum + asset.value, 0) - debts.reduce((sum, debt) => sum + debt.amount, 0);
-  const chartRef = useRef(null);
+const Dashboard = ({
+  user,
+  assets,
+  debts,
+  notifications,
+  familyMembers,
+  onAddAsset,
+  onAddDebt,
+  onUploadDocument,
+  onAddFamilyMember,
+  onLogout,
+}) => {
+  const { t, language, setLanguage, currency, setCurrency, formatCurrency } = useContext(AppContext);
+  const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
+  const [isDebtModalOpen, setIsDebtModalOpen] = useState(false);
+  const [isDocumentModalOpen, setIsDocumentModalOpen] = useState(false);
+  const [isFamilyModalOpen, setIsFamilyModalOpen] = useState(false);
+  const [assetForm, setAssetForm] = useState({ name: '', category: 'Real Estate', value: '' });
+  const [debtForm, setDebtForm] = useState({ name: '', category: 'Mortgage', amount: '' });
+  const [documentForm, setDocumentForm] = useState({ assetId: '', file: null });
+  const [familyForm, setFamilyForm] = useState({ name: '', email: '', role: 'Viewer' });
 
   useEffect(() => {
-    const ctx = document.getElementById('netWorthChart')?.getContext('2d');
-    if (!ctx) return;
+    console.log('Dashboard user:', user);
+  }, [user]);
 
-    if (chartRef.current) {
-      chartRef.current.destroy();
-    }
+  const totalAssets = assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
+  const totalDebts = debts.reduce((sum, debt) => sum + (debt.amount || 0), 0);
+  const netWorth = totalAssets - totalDebts;
 
-    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(45, 212, 191, 0.3)');
-    gradient.addColorStop(1, 'rgba(45, 212, 191, 0)');
-
-    chartRef.current = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-        datasets: [{
-          label: 'Net Worth ($)',
-          data: [250000, 260000, 270000, 280000, netWorth],
-          borderColor: '#2DD4BF',
-          backgroundColor: gradient,
-          fill: true,
-          tension: 0.4,
-          pointBackgroundColor: '#FFFFFF',
-          pointBorderColor: '#2DD4BF',
-          pointHoverBackgroundColor: '#2DD4BF',
-          pointHoverBorderColor: '#FFFFFF',
-        }],
-      },
-      options: {
-        scales: {
-          y: { beginAtZero: false, grid: { color: '#E5E7EB' }, ticks: { color: '#6B7280' } },
-          x: { grid: { display: false }, ticks: { color: '#6B7280' } },
-        },
-        plugins: {
-          legend: { display: true, position: 'top', labels: { font: { size: 14, weight: 'bold' }, color: '#1E3A8A' } },
-          tooltip: { backgroundColor: '#1E3A8A', titleColor: '#FFFFFF', bodyColor: '#FFFFFF', borderColor: '#2DD4BF', borderWidth: 1 },
-        },
-        interaction: { mode: 'index', intersect: false },
-        hover: { mode: 'index', intersect: false },
-      },
+  const handleAssetSubmit = (e) => {
+    e.preventDefault();
+    onAddAsset({
+      id: Date.now(),
+      name: assetForm.name,
+      category: assetForm.category,
+      value: parseFloat(assetForm.value) || 0,
+      documents: [],
     });
+    setAssetForm({ name: '', category: 'Real Estate', value: '' });
+    setIsAssetModalOpen(false);
+  };
 
-    return () => {
-      if (chartRef.current) {
-        chartRef.current.destroy();
-        chartRef.current = null;
-      }
-    };
-  }, [netWorth]);
+  const handleDebtSubmit = (e) => {
+    e.preventDefault();
+    onAddDebt({
+      id: Date.now(),
+      name: debtForm.name,
+      category: debtForm.category,
+      amount: parseFloat(debtForm.amount) || 0,
+    });
+    setDebtForm({ name: '', category: 'Mortgage', amount: '' });
+    setIsDebtModalOpen(false);
+  };
+
+  const handleDocumentSubmit = (e) => {
+    e.preventDefault();
+    if (documentForm.file && documentForm.assetId && documentForm.file.type === 'application/pdf') {
+      onUploadDocument(documentForm.assetId, documentForm.file.name);
+      setDocumentForm({ assetId: '', file: null });
+      setIsDocumentModalOpen(false);
+    } else {
+      alert(t('onlyPDF'));
+    }
+  };
+
+  const handleFamilySubmit = (e) => {
+    e.preventDefault();
+    onAddFamilyMember({
+      id: Date.now(),
+      name: familyForm.name,
+      email: familyForm.email,
+      role: familyForm.role,
+    });
+    setFamilyForm({ name: '', email: '', role: 'Viewer' });
+    setIsFamilyModalOpen(false);
+  };
+
+  const handleDownloadDeclaration = () => {
+    // Placeholder for asset declaration generation (to be implemented)
+    alert(t('downloadDeclarationPlaceholder'));
+  };
+
+  const userName = user && typeof user.email === 'string' ? user.email.split('@')[0] : 'User';
 
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar activeLink="Dashboard" onLogout={onLogout} />
       <div className="flex-1 md:ml-64 p-6 lg:p-8">
         <header className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome, {user.email.split('@')[0]}</h1>
-          <button onClick={onLogout} className="text-gray-600 hover:text-gray-800 transition-colors duration-200">
-            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-            </svg>
-          </button>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {t('welcome')}, {userName}
+          </h1>
+          <div className="flex items-center space-x-4">
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 hover:bg-gray-50"
+            >
+              <option value="en">🇺🇳 English</option>
+              <option value="fr">🇫🇷 Français</option>
+            </select>
+            <select
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 hover:bg-gray-50"
+            >
+              <option value="USD">USD $</option>
+              <option value="EUR">EUR €</option>
+              <option value="KES">KES KSh</option>
+            </select>
+            <button
+              onClick={handleDownloadDeclaration}
+              className="text-gray-600 hover:text-teal-600 transition-colors duration-200"
+              title={t('downloadDeclaration')}
+            >
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                />
+              </svg>
+            </button>
+            <button
+              onClick={onLogout}
+              className="text-gray-600 hover:text-gray-800 transition-colors duration-200"
+            >
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+            </button>
+          </div>
         </header>
         <div className="animate-fade-in">
-          {/* Overview Section */}
-          <section className="mb-10">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900">Overview</h2>
-              <Link to="/assets" className="text-teal-500 hover:text-teal-600 font-medium">View All Assets</Link>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('netWorth')}</h2>
+              <p className="text-3xl font-bold text-teal-500">{formatCurrency(netWorth)}</p>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-1">
-                <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                  <svg className="h-5 w-5 mr-2 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                  Net Worth
-                </h3>
-                <p className="text-3xl font-bold text-teal-500">${netWorth.toLocaleString()}</p>
-                <canvas id="netWorthChart" className="mt-6"></canvas>
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('totalAssets')}</h2>
+              <p className="text-3xl font-bold text-teal-500">{formatCurrency(totalAssets)}</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('totalDebts')}</h2>
+              <p className="text-3xl font-bold text-teal-500">{formatCurrency(totalDebts)}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">{t('recentAssets')}</h2>
+                <button
+                  onClick={() => setIsAssetModalOpen(true)}
+                  className="text-teal-500 hover:text-teal-600 font-medium"
+                >
+                  {t('addAsset')}
+                </button>
               </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-1">
-                <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                  <svg className="h-5 w-5 mr-2 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                  </svg>
-                  Summary
-                </h3>
-                <div className="space-y-3">
-                  <p className="text-gray-600">Total Assets: <span className="font-medium text-gray-900">${assets.reduce((sum, asset) => sum + asset.value, 0).toLocaleString()}</span></p>
-                  <p className="text-gray-600">Total Debts: <span className="font-medium text-gray-900">${debts.reduce((sum, debt) => sum + debt.amount, 0).toLocaleString()}</span></p>
-                  <p className="text-gray-600">Notifications: <span className="font-medium text-gray-900">{notifications.length}</span></p>
-                  <p className="text-gray-600">Family Members: <span className="font-medium text-gray-900">{familyMembers.length}</span></p>
-                </div>
-                <Link to="/notifications" className="mt-4 inline-block text-teal-500 hover:text-teal-600 font-medium">View Notifications</Link>
-              </div>
-            </div>
-          </section>
-          {/* Assets and Debts Section */}
-          <section className="mb-10">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900">Assets & Debts</h2>
-              <Link to="/debts" className="text-teal-500 hover:text-teal-600 font-medium">View All Debts</Link>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-1">
-                <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                  <svg className="h-5 w-5 mr-2 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"></path>
-                  </svg>
-                  Recent Assets
-                </h3>
-                <div className="space-y-3">
+              {assets.length > 0 ? (
+                <div className="space-y-4">
                   {assets.slice(0, 3).map(asset => (
-                    <div key={asset.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <div
+                      key={asset.id}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    >
                       <div>
                         <p className="text-gray-900 font-medium">{asset.name}</p>
-                        <p className="text-sm text-gray-600">{asset.category}</p>
+                        <p className="text-sm text-gray-600">{t(asset.category.toLowerCase())}</p>
                       </div>
-                      <p className="text-gray-900 font-medium">${asset.value.toLocaleString()}</p>
+                      <p className="text-gray-900 font-medium">{formatCurrency(asset.value)}</p>
                     </div>
                   ))}
                 </div>
-                <AssetForm onAddAsset={onAddAsset} />
+              ) : (
+                <p className="text-gray-600">{t('noAssets')}</p>
+              )}
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">{t('recentDebts')}</h2>
+                <button
+                  onClick={() => setIsDebtModalOpen(true)}
+                  className="text-teal-500 hover:text-teal-600 font-medium"
+                >
+                  {t('addDebt')}
+                </button>
               </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-1">
-                <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                  <svg className="h-5 w-5 mr-2 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                  </svg>
-                  Recent Debts
-                </h3>
-                <div className="space-y-3">
+              {debts.length > 0 ? (
+                <div className="space-y-4">
                   {debts.slice(0, 3).map(debt => (
-                    <div key={debt.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <div
+                      key={debt.id}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    >
                       <div>
                         <p className="text-gray-900 font-medium">{debt.name}</p>
-                        <p className="text-sm text-gray-600">{debt.category}</p>
+                        <p className="text-sm text-gray-600">{t(debt.category.toLowerCase())}</p>
                       </div>
-                      <p className="text-gray-900 font-medium">${debt.amount.toLocaleString()}</p>
+                      <p className="text-gray-900 font-medium">{formatCurrency(debt.amount)}</p>
                     </div>
                   ))}
                 </div>
-                <DebtForm onAddDebt={onAddDebt} />
-              </div>
+              ) : (
+                <p className="text-gray-600">{t('noDebts')}</p>
+              )}
             </div>
-          </section>
-          {/* Other Tools Section */}
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Other Tools</h2>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-1">
-                <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                  <svg className="h-5 w-5 mr-2 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                  </svg>
-                  Document Vault
-                </h3>
-                <DocumentVault assets={assets} onUploadDocument={onUploadDocument} />
-                <Link to="/documents" className="mt-4 inline-block text-teal-500 hover:text-teal-600 font-medium">View All Documents</Link>
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">{t('notifications')}</h2>
+                <a href="/notifications" className="text-teal-500 hover:text-teal-600 font-medium">
+                  {t('viewNotifications')}
+                </a>
               </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-1">
-                <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                  <svg className="h-5 w-5 mr-2 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                  </svg>
-                  Notifications
-                </h3>
-                <Notifications notifications={notifications} />
-                <Link to="/notifications" className="mt-4 inline-block text-teal-500 hover:text-teal-600 font-medium">View All Notifications</Link>
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-1">
-                <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                  <svg className="h-5 w-5 mr-2 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 005.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                  </svg>
-                  Family Sharing
-                </h3>
-                <FamilySharing familyMembers={familyMembers} onAddFamilyMember={onAddFamilyMember} />
-                <Link to="/family-sharing" className="mt-4 inline-block text-teal-500 hover:text-teal-600 font-medium">Manage Family</Link>
-              </div>
+              {notifications.length > 0 ? (
+                <div className="space-y-4">
+                  {notifications.slice(0, 3).map(notification => (
+                    <div key={notification.id} className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-gray-900">{notification.message}</p>
+                      <p className="text-sm text-gray-600">{notification.date}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-600">{t('noNotifications')}</p>
+              )}
             </div>
-          </section>
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">{t('familyMembers')}</h2>
+                <button
+                  onClick={() => setIsFamilyModalOpen(true)}
+                  className="text-teal-500 hover:text-teal-600 font-medium"
+                >
+                  {t('addFamilyMember')}
+                </button>
+              </div>
+              {familyMembers.length > 0 ? (
+                <div className="space-y-4">
+                  {familyMembers.slice(0, 3).map(member => (
+                    <div
+                      key={member.id}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    >
+                      <div>
+                        <p className="text-gray-900 font-medium">{member.name}</p>
+                        <p className="text-sm text-gray-600">{member.email}</p>
+                      </div>
+                      <p className="text-gray-600">{t(member.role.toLowerCase())}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-600">{t('noFamilyMembers')}</p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
+      <Modal isOpen={isAssetModalOpen} onClose={() => setIsAssetModalOpen(false)} title={t('addAsset')}>
+        <form onSubmit={handleAssetSubmit}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">{t('name')}</label>
+            <input
+              type="text"
+              value={assetForm.name}
+              onChange={(e) => setAssetForm({ ...assetForm, name: e.target.value })}
+              className="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">{t('category')}</label>
+            <select
+              value={assetForm.category}
+              onChange={(e) => setAssetForm({ ...assetForm, category: e.target.value })}
+              className="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
+            >
+              <option>{t('realEstate')}</option>
+              <option>{t('stocks')}</option>
+              <option>{t('cash')}</option>
+              <option>{t('other')}</option>
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">{t('value')}</label>
+            <input
+              type="number"
+              value={assetForm.value}
+              onChange={(e) => setAssetForm({ ...assetForm, value: e.target.value })}
+              className="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
+          >
+            {t('addAsset')}
+          </button>
+        </form>
+      </Modal>
+      <Modal isOpen={isDebtModalOpen} onClose={() => setIsDebtModalOpen(false)} title={t('addDebt')}>
+        <form onSubmit={handleDebtSubmit}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">{t('name')}</label>
+            <input
+              type="text"
+              value={debtForm.name}
+              onChange={(e) => setDebtForm({ ...debtForm, name: e.target.value })}
+              className="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">{t('category')}</label>
+            <select
+              value={debtForm.category}
+              onChange={(e) => setDebtForm({ ...debtForm, category: e.target.value })}
+              className="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
+            >
+              <option>{t('mortgage')}</option>
+              <option>{t('carLoan')}</option>
+              <option>{t('creditCard')}</option>
+              <option>{t('other')}</option>
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">{t('amount')}</label>
+            <input
+              type="number"
+              value={debtForm.amount}
+              onChange={(e) => setDebtForm({ ...debtForm, amount: e.target.value })}
+              className="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
+          >
+            {t('addDebt')}
+          </button>
+        </form>
+      </Modal>
+      <Modal isOpen={isDocumentModalOpen} onClose={() => setIsDocumentModalOpen(false)} title={t('uploadDocument')}>
+        <form onSubmit={handleDocumentSubmit}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">{t('asset')}</label>
+            <select
+              value={documentForm.assetId}
+              onChange={(e) => setDocumentForm({ ...documentForm, assetId: e.target.value })}
+              className="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
+              required
+            >
+              <option value="">{t('selectAsset')}</option>
+              {assets.map(asset => (
+                <option key={asset.id} value={asset.id}>
+                  {asset.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">{t('document')}</label>
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={(e) => setDocumentForm({ ...documentForm, file: e.target.files[0] })}
+              className="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
+          >
+            {t('uploadDocument')}
+          </button>
+        </form>
+      </Modal>
+      <Modal isOpen={isFamilyModalOpen} onClose={() => setIsFamilyModalOpen(false)} title={t('addFamilyMember')}>
+        <form onSubmit={handleFamilySubmit}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">{t('name')}</label>
+            <input
+              type="text"
+              value={familyForm.name}
+              onChange={(e) => setFamilyForm({ ...familyForm, name: e.target.value })}
+              className="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">{t('email')}</label>
+            <input
+              type="email"
+              value={familyForm.email}
+              onChange={(e) => setFamilyForm({ ...familyForm, email: e.target.value })}
+              className="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">{t('role')}</label>
+            <select
+              value={familyForm.role}
+              onChange={(e) => setFamilyForm({ ...familyForm, role: e.target.value })}
+              className="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
+            >
+              <option>{t('viewer')}</option>
+              <option>{t('editor')}</option>
+            </select>
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
+          >
+            {t('addFamilyMember')}
+          </button>
+        </form>
+      </Modal>
     </div>
   );
 };

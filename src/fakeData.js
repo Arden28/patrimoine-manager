@@ -1,20 +1,19 @@
-export const fakeAssets = [
-    { id: 1, category: 'Property', name: 'Primary Residence', value: 500000, documents: ['Title Deed.pdf'], lastUpdated: '2025-04-15' },
-    { id: 2, category: 'Savings', name: 'Savings Account', value: 75000, documents: ['Bank Statement.pdf'], lastUpdated: '2025-05-01' },
-    { id: 3, category: 'Vehicle', name: 'Tesla Model 3', value: 40000, documents: ['Insurance.pdf'], lastUpdated: '2025-03-20' },
-  ];
-  
-  export const fakeDebts = [
-    { id: 1, category: 'Mortgage', name: 'Home Loan', amount: 300000, lastUpdated: '2025-04-15' },
-    { id: 2, category: 'Car Loan', name: 'Auto Loan', amount: 15000, lastUpdated: '2025-03-20' },
-  ];
-  
-  export const fakeNotifications = [
-    { id: 1, message: 'Insurance renewal for Tesla Model 3 due on 2025-06-01', date: '2025-05-03' },
-    { id: 2, message: 'Property tax payment due on 2025-05-15', date: '2025-05-01' },
-  ];
-  
-  export const fakeFamilyMembers = [
-    { id: 1, name: 'Jane Doe', role: 'Editor' },
-    { id: 2, name: 'John Smith', role: 'Viewer' },
-  ];
+export const assets = [
+  { id: 1, name: 'Primary Home', category: 'Real Estate', value: 500000, documents: ['Deed.pdf'] },
+  { id: 2, name: 'Stock Portfolio', category: 'Stocks', value: 100000, documents: [] },
+];
+
+export const debts = [
+  { id: 1, name: 'Home Mortgage', category: 'Mortgage', amount: 300000 },
+  { id: 2, name: 'Car Loan', category: 'Car Loan', amount: 20000 },
+];
+
+export const notifications = [
+  { id: 1, message: 'New document uploaded', date: '2023-10-01' },
+  { id: 2, message: 'Asset value updated', date: '2023-10-02' },
+];
+
+export const familyMembers = [
+  { id: 1, name: 'Jane Doe', email: 'jane@example.com', role: 'Editor' },
+  { id: 2, name: 'John Smith', email: 'john@example.com', role: 'Viewer' },
+];

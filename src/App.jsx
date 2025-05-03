@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import AssetsPage from './components/AssetsPage';
@@ -7,146 +7,230 @@ import DebtsPage from './components/DebtsPage';
 import DocumentsPage from './components/DocumentsPage';
 import NotificationsPage from './components/NotificationsPage';
 import FamilySharingPage from './components/FamilySharingPage';
-import { fakeAssets, fakeDebts, fakeNotifications, fakeFamilyMembers } from './fakeData';
+import { AppProvider } from './AppContext';
+import { assets, debts, notifications, familyMembers } from './fakeData';
 
 const App = () => {
   const [user, setUser] = useState(null);
-  const [assets, setAssets] = useState(fakeAssets);
-  const [debts, setDebts] = useState(fakeDebts);
-  const [notifications, setNotifications] = useState(fakeNotifications);
-  const [familyMembers, setFamilyMembers] = useState(fakeFamilyMembers);
+  const [assetsState, setAssetsState] = useState(assets);
+  const [debtsState, setDebtsState] = useState(debts);
+  const [notificationsState, setNotificationsState] = useState(notifications);
+  const [familyMembersState, setFamilyMembersState] = useState(familyMembers);
 
-  const handleLogin = (userData) => {
-    setUser(userData);
+  const handleLogin = (email, password) => {
+    if (typeof email === 'string' && email.includes('@')) {
+      setUser({ email });
+    } else {
+      console.error('Invalid email:', email);
+    }
   };
 
   const handleLogout = () => {
     setUser(null);
   };
 
+  // Asset Handlers
   const handleAddAsset = (newAsset) => {
-    setAssets([...assets, newAsset]);
-    setNotifications([...notifications, {
-      id: Date.now(),
-      message: `New asset "${newAsset.name}" added`,
-      date: new Date().toISOString().split('T')[0],
-    }]);
+    setAssetsState([...assetsState, newAsset]);
   };
 
+  const handleEditAsset = (updatedAsset) => {
+    setAssetsState(
+      assetsState.map(asset =>
+        asset.id === updatedAsset.id ? updatedAsset : asset
+      )
+    );
+  };
+
+  const handleDeleteAsset = (assetId) => {
+    setAssetsState(assetsState.filter(asset => asset.id !== assetId));
+  };
+
+  // Debt Handlers
   const handleAddDebt = (newDebt) => {
-    setDebts([...debts, newDebt]);
-    setNotifications([...notifications, {
-      id: Date.now(),
-      message: `New debt "${newDebt.name}" added`,
-      date: new Date().toISOString().split('T')[0],
-    }]);
+    setDebtsState([...debtsState, newDebt]);
   };
 
-  const handleUploadDocument = (assetId, fileName) => {
-    if (!fileName) return;
-    setAssets(assets.map(asset =>
-      asset.id === assetId
-        ? { ...asset, documents: [...asset.documents, fileName] }
-        : asset
-    ));
-    setNotifications([...notifications, {
-      id: Date.now(),
-      message: `Document "${fileName}" uploaded for asset`,
-      date: new Date().toISOString().split('T')[0],
-    }]);
+  const handleEditDebt = (updatedDebt) => {
+    setDebtsState(
+      debtsState.map(debt =>
+        debt.id === updatedDebt.id ? updatedDebt : debt
+      )
+    );
   };
 
+  const handleDeleteDebt = (debtId) => {
+    setDebtsState(debtsState.filter(debt => debt.id !== debtId));
+  };
+
+  // Document Handlers
+  const handleUploadDocument = (assetId, document) => {
+    setAssetsState(
+      assetsState.map(asset =>
+        asset.id === assetId
+          ? { ...asset, documents: [...asset.documents, document] }
+          : asset
+      )
+    );
+  };
+
+  const handleDeleteDocument = (assetId, document) => {
+    setAssetsState(
+      assetsState.map(asset =>
+        asset.id === assetId
+          ? { ...asset, documents: asset.documents.filter(doc => doc !== document) }
+          : asset
+      )
+    );
+  };
+
+  // Notification Handlers
+  const handleDeleteNotification = (notificationId) => {
+    setNotificationsState(
+      notificationsState.filter(notification => notification.id !== notificationId)
+    );
+  };
+
+  // Family Member Handlers
   const handleAddFamilyMember = (newMember) => {
-    setFamilyMembers([...familyMembers, newMember]);
-    setNotifications([...notifications, {
-      id: Date.now(),
-      message: `Family member "${newMember.name}" added as ${newMember.role}`,
-      date: new Date().toISOString().split('T')[0],
-    }]);
+    setFamilyMembersState([...familyMembersState, newMember]);
+  };
+
+  const handleEditFamilyMember = (updatedMember) => {
+    setFamilyMembersState(
+      familyMembersState.map(member =>
+        member.id === updatedMember.id ? updatedMember : member
+      )
+    );
+  };
+
+  const handleDeleteFamilyMember = (memberId) => {
+    setFamilyMembersState(
+      familyMembersState.filter(member => member.id !== memberId)
+    );
   };
 
   return (
-    <Router>
-      <div className="min-h-screen">
-        {user ? (
-          <Routes>
-            <Route
-              path="/"
-              element={
+    <AppProvider>
+      <Router>
+        <Routes>
+          <Route
+            path="/login"
+            element={
+              user ? (
+                <Navigate to="/" />
+              ) : (
+                <Login onLogin={handleLogin} />
+              )
+            }
+          />
+          <Route
+            path="/"
+            element={
+              user ? (
                 <Dashboard
                   user={user}
-                  assets={assets}
-                  debts={debts}
-                  notifications={notifications}
-                  familyMembers={familyMembers}
+                  assets={assetsState}
+                  debts={debtsState}
+                  notifications={notificationsState}
+                  familyMembers={familyMembersState}
                   onAddAsset={handleAddAsset}
                   onAddDebt={handleAddDebt}
                   onUploadDocument={handleUploadDocument}
                   onAddFamilyMember={handleAddFamilyMember}
                   onLogout={handleLogout}
                 />
-              }
-            />
-            <Route
-              path="/assets"
-              element={
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/assets"
+            element={
+              user ? (
                 <AssetsPage
                   user={user}
-                  assets={assets}
+                  assets={assetsState}
                   onAddAsset={handleAddAsset}
+                  onEditAsset={handleEditAsset}
+                  onDeleteAsset={handleDeleteAsset}
                   onLogout={handleLogout}
                 />
-              }
-            />
-            <Route
-              path="/debts"
-              element={
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/debts"
+            element={
+              user ? (
                 <DebtsPage
                   user={user}
-                  debts={debts}
+                  debts={debtsState}
                   onAddDebt={handleAddDebt}
+                  onEditDebt={handleEditDebt}
+                  onDeleteDebt={handleDeleteDebt}
                   onLogout={handleLogout}
                 />
-              }
-            />
-            <Route
-              path="/documents"
-              element={
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/documents"
+            element={
+              user ? (
                 <DocumentsPage
                   user={user}
-                  assets={assets}
+                  assets={assetsState}
                   onUploadDocument={handleUploadDocument}
+                  onDeleteDocument={handleDeleteDocument}
                   onLogout={handleLogout}
                 />
-              }
-            />
-            <Route
-              path="/notifications"
-              element={
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              user ? (
                 <NotificationsPage
                   user={user}
-                  notifications={notifications}
+                  notifications={notificationsState}
+                  onDeleteNotification={handleDeleteNotification}
                   onLogout={handleLogout}
                 />
-              }
-            />
-            <Route
-              path="/family-sharing"
-              element={
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/family-sharing"
+            element={
+              user ? (
                 <FamilySharingPage
                   user={user}
-                  familyMembers={familyMembers}
+                  familyMembers={familyMembersState}
                   onAddFamilyMember={handleAddFamilyMember}
+                  onEditFamilyMember={handleEditFamilyMember}
+                  onDeleteFamilyMember={handleDeleteFamilyMember}
                   onLogout={handleLogout}
                 />
-              }
-            />
-          </Routes>
-        ) : (
-          <Login onLogin={handleLogin} />
-        )}
-      </div>
-    </Router>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+      </Router>
+    </AppProvider>
   );
 };
 
