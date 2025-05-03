@@ -12,9 +12,24 @@
   .animate-fade-in {
     animation: fadeIn 0.5s ease-in;
   }
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-in-out;
+  }
 }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@layer components {
+  .navy-900 { background-color: #1E3A8A; }
+  .navy-800 { background-color: #1E40AF; }
+  .teal-500 { color: #2DD4BF; }
+  .teal-600 { color: #14B8A6; }
 }

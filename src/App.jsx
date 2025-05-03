@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import AssetsPage from './components/AssetsPage';
+import DebtsPage from './components/DebtsPage';
+import DocumentsPage from './components/DocumentsPage';
+import NotificationsPage from './components/NotificationsPage';
+import FamilySharingPage from './components/FamilySharingPage';
 import { fakeAssets, fakeDebts, fakeNotifications, fakeFamilyMembers } from './fakeData';
 
 const App = () => {
@@ -60,24 +66,87 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      {user ? (
-        <Dashboard
-          user={user}
-          assets={assets}
-          debts={debts}
-          notifications={notifications}
-          familyMembers={familyMembers}
-          onAddAsset={handleAddAsset}
-          onAddDebt={handleAddDebt}
-          onUploadDocument={handleUploadDocument}
-          onAddFamilyMember={handleAddFamilyMember}
-          onLogout={handleLogout}
-        />
-      ) : (
-        <Login onLogin={handleLogin} />
-      )}
-    </div>
+    <Router>
+      <div className="min-h-screen">
+        {user ? (
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Dashboard
+                  user={user}
+                  assets={assets}
+                  debts={debts}
+                  notifications={notifications}
+                  familyMembers={familyMembers}
+                  onAddAsset={handleAddAsset}
+                  onAddDebt={handleAddDebt}
+                  onUploadDocument={handleUploadDocument}
+                  onAddFamilyMember={handleAddFamilyMember}
+                  onLogout={handleLogout}
+                />
+              }
+            />
+            <Route
+              path="/assets"
+              element={
+                <AssetsPage
+                  user={user}
+                  assets={assets}
+                  onAddAsset={handleAddAsset}
+                  onLogout={handleLogout}
+                />
+              }
+            />
+            <Route
+              path="/debts"
+              element={
+                <DebtsPage
+                  user={user}
+                  debts={debts}
+                  onAddDebt={handleAddDebt}
+                  onLogout={handleLogout}
+                />
+              }
+            />
+            <Route
+              path="/documents"
+              element={
+                <DocumentsPage
+                  user={user}
+                  assets={assets}
+                  onUploadDocument={handleUploadDocument}
+                  onLogout={handleLogout}
+                />
+              }
+            />
+            <Route
+              path="/notifications"
+              element={
+                <NotificationsPage
+                  user={user}
+                  notifications={notifications}
+                  onLogout={handleLogout}
+                />
+              }
+            />
+            <Route
+              path="/family-sharing"
+              element={
+                <FamilySharingPage
+                  user={user}
+                  familyMembers={familyMembers}
+                  onAddFamilyMember={handleAddFamilyMember}
+                  onLogout={handleLogout}
+                />
+              }
+            />
+          </Routes>
+        ) : (
+          <Login onLogin={handleLogin} />
+        )}
+      </div>
+    </Router>
   );
 };
 
