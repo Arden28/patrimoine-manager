@@ -52,74 +52,14 @@ const AssetsPage = ({ user, assets, onAddAsset, onEditAsset, onDeleteAsset, onLo
   };
 
   const userName = user && typeof user.email === 'string' ? user.email.split('@')[0] : 'User';
+  const text = t('assets');
 
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar activeLink="Assets" onLogout={onLogout} />
       <div className="flex-1 md:ml-64 p-6 lg:p-8">
         {/* Header */}
-      <Header onUserName={userName} onLogout={onLogout} onHandleDownloadDeclaration={handleDownloadDeclaration} />
-        {/* <header className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">{t('assets')} {t('for')} {userName}</h1>
-          <div className="flex items-center space-x-4">
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 hover:bg-gray-50"
-            >
-              <option value="en">🇺🇳 English</option>
-              <option value="fr">🇫🇷 Français</option>
-            </select>
-            <select
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-              className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 hover:bg-gray-50"
-            >
-              <option value="USD">USD $</option>
-              <option value="EUR">EUR €</option>
-              <option value="KES">KES KSh</option>
-            </select>
-            <button
-              onClick={handleDownloadDeclaration}
-              className="text-gray-600 hover:text-teal-600 transition-colors duration-200"
-              title={t('downloadDeclaration')}
-            >
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                />
-              </svg>
-            </button>
-            <button
-              onClick={onLogout}
-              className="text-gray-600 hover:text-gray-800 transition-colors duration-200"
-            >
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                />
-              </svg>
-            </button>
-          </div>
-        </header> */}
+      <Header onText={text} onUserName={userName} onLogout={onLogout} onHandleDownloadDeclaration={handleDownloadDeclaration} />
         <div className="animate-fade-in">
           <div className="bg-white p-6 rounded-xl shadow-sm">
             <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">

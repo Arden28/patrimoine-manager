@@ -5,7 +5,7 @@ import Header from './Header';
 import { AppContext } from '../AppContext';
 
 const DocumentsPage = ({ user, assets, onUploadDocument, onDeleteDocument, onLogout }) => {
-  const { t, setLanguage, setCurrency } = useContext(AppContext);
+  const { t } = useContext(AppContext);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedAssetId, setSelectedAssetId] = useState('');
@@ -35,12 +35,13 @@ const DocumentsPage = ({ user, assets, onUploadDocument, onDeleteDocument, onLog
   };
 
   const userName = user && typeof user.email === 'string' ? user.email.split('@')[0] : 'User';
+  const text = t('documents');
 
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar activeLink="Documents" onLogout={onLogout} />
       <div className="flex-1 md:ml-64 p-6 lg:p-8">
-      <Header onUserName={userName} onLogout={onLogout} onHandleDownloadDeclaration={handleDownloadDeclaration} />
+      <Header onText={text} onLogout={onLogout} onHandleDownloadDeclaration={handleDownloadDeclaration} />
         <div className="animate-fade-in">
           <div className="bg-white p-6 rounded-xl shadow-sm">
             <div className="flex justify-between items-center mb-6">

@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import Sidebar from './Sidebar';
 import Modal from './Modal';
+import Header from './Header';
+import { AppContext } from '../AppContext';
 
 const FamilySharingPage = ({ user, familyMembers, onAddFamilyMember, onEditFamilyMember, onDeleteFamilyMember, onLogout }) => {
+  const { t } = useContext(AppContext);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [addForm, setAddForm] = useState({ name: '', email: '', role: 'Viewer' });
   const [editForm, setEditForm] = useState({ id: null, name: '', email: '', role: 'Viewer' });
   const [search, setSearch] = useState('');
   const [filterRole, setFilterRole] = useState('');
+
+  const handleDownloadDeclaration = () => {
+    alert(t('downloadDeclarationPlaceholder'));
+    // Placeholder: To be implemented with LaTeX PDF generation
+  };
 
   // Log familyMembers for debugging
   console.log('familyMembers:', familyMembers);
@@ -51,18 +59,13 @@ const FamilySharingPage = ({ user, familyMembers, onAddFamilyMember, onEditFamil
     }
   };
 
+  const text = t('familySharing');
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar activeLink="Family Sharing" onLogout={onLogout} />
       <div className="flex-1 md:ml-64 p-6 lg:p-8">
-        <header className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Family Sharing</h1>
-          <button onClick={onLogout} className="text-gray-600 hover:text-gray-800 transition-colors duration-200">
-            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-            </svg>
-          </button>
-        </header>
+      <Header onText={text} onLogout={onLogout} onHandleDownloadDeclaration={handleDownloadDeclaration} />
         <div className="animate-fade-in">
           <div className="bg-white p-6 rounded-xl shadow-sm">
             <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">

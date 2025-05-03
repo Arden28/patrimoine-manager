@@ -1,14 +1,14 @@
 import React, { useState, useContext } from 'react';
 import { AppContext } from '../AppContext';
 
-const Header = ({ onLogout, onUserName, onHandleDownloadDeclaration }) => {
+const Header = ({ onLogout, onText, onHandleDownloadDeclaration }) => {
   const { t, language, setLanguage, currency, setCurrency } = useContext(AppContext);
 
 
   return (
 
     <header className="flex items-center justify-between mb-8">
-      <h1 className="text-3xl font-bold text-gray-900">{t('assets')} {t('for')} {onUserName}</h1>
+      <h1 className="text-3xl font-bold text-gray-900">{onText}</h1>
       <div className="flex items-center space-x-4">
         <select
           value={language}
