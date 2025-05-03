@@ -14,6 +14,10 @@ const App = () => {
     setUser(userData);
   };
 
+  const handleLogout = () => {
+    setUser(null);
+  };
+
   const handleAddAsset = (newAsset) => {
     setAssets([...assets, newAsset]);
     setNotifications([...notifications, {
@@ -68,6 +72,7 @@ const App = () => {
           onAddDebt={handleAddDebt}
           onUploadDocument={handleUploadDocument}
           onAddFamilyMember={handleAddFamilyMember}
+          onLogout={handleLogout}
         />
       ) : (
         <Login onLogin={handleLogin} />
