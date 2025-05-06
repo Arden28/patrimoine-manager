@@ -1,6 +1,7 @@
 export const assets = [
   { id: 1, name: 'Primary Home', category: 'Real Estate', value: 500000, documents: ['Deed.pdf'] },
   { id: 2, name: 'Stock Portfolio', category: 'Stocks', value: 100000, documents: [] },
+  { id: 2, name: 'Farm (In Nakuru)', category: 'Stocks', value: 200000, documents: [] },
 ];
 
 export const debts = [

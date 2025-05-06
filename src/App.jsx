@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import PersonalInfoPage from './pages/PersonalInfoPage';
 import AssetsPage from './components/AssetsPage';
 import DebtsPage from './components/DebtsPage';
 import DocumentsPage from './components/DocumentsPage';
@@ -150,6 +151,23 @@ const App = () => {
             element={
               user ? (
                 <AssetsPage
+                  user={user}
+                  assets={assetsState}
+                  onAddAsset={handleAddAsset}
+                  onEditAsset={handleEditAsset}
+                  onDeleteAsset={handleDeleteAsset}
+                  onLogout={handleLogout}
+                />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/personal-info"
+            element={
+              user ? (
+                <PersonalInfoPage
                   user={user}
                   assets={assetsState}
                   onAddAsset={handleAddAsset}

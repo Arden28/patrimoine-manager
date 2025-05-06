@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '../AppContext';
 
 const Login = ({ onLogin }) => {
-  const { t } = useContext(AppContext);
+  const { t, language } = useContext(AppContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -36,11 +36,11 @@ const Login = ({ onLogin }) => {
     console.log('Login attempt:', { email, password });
 
     if (!email.includes('@') || email.trim() === '') {
-      setError(t('invalidEmail'));
+      setError(t('invalidEmail')?.[language] || 'Invalid Email');
       return;
     }
     if (password.trim() === '') {
-      setError(t('invalidPassword'));
+      setError(t('invalidPassword')?.[language] || 'Invalid Password');
       return;
     }
 
@@ -86,8 +86,12 @@ const Login = ({ onLogin }) => {
             </svg>
           </div>
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900">{t('login')}</h2>
-            <p className="mt-1 text-sm text-gray-600">{t('accessYourPersonalFile')}</p>
+            <h2 className="text-2xl font-bold text-gray-900">
+              {t('login')?.[language] || 'Login'}
+            </h2>
+            <p className="mt-1 text-sm text-gray-600">
+              {t('accessYourPersonalFile')?.[language] || 'Access your personal file'}
+            </p>
           </div>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
@@ -113,7 +117,7 @@ const Login = ({ onLogin }) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-400 sm:text-sm"
-                  placeholder={t('email')}
+                  placeholder={t('email')?.[language] || 'Email'}
                   required
                 />
               </div>
@@ -141,7 +145,7 @@ const Login = ({ onLogin }) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-400 sm:text-sm"
-                  placeholder={t('password')}
+                  placeholder={t('password')?.[language] || 'Password'}
                   required
                 />
               </div>
@@ -156,7 +160,7 @@ const Login = ({ onLogin }) => {
                 type="submit"
                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-200"
               >
-                {t('login')}
+                {t('login')?.[language] || 'Login'}
               </button>
             </div>
             <div className="space-y-2">
@@ -187,7 +191,7 @@ const Login = ({ onLogin }) => {
                     fill="#EA4335"
                   />
                 </svg>
-                {t('signInWithGoogle')}
+                {t('signInWithGoogle')?.[language] || 'Sign in with Google'}
               </button>
               <button
                 onClick={handleLinkedInLogin}
@@ -204,7 +208,7 @@ const Login = ({ onLogin }) => {
                     fill="#0A66C2"
                   />
                 </svg>
-                {t('signInWithLinkedIn')}
+                {t('signInWithLinkedIn')?.[language] || 'Sign in with LinkedIn'}
               </button>
             </div>
             <div className="text-center">
@@ -212,7 +216,7 @@ const Login = ({ onLogin }) => {
                 onClick={handleForgotPassword}
                 className="text-teal-600 hover:text-teal-700 text-sm font-medium transition-colors duration-200"
               >
-                {t('forgotPassword')}
+                {t('forgotPassword')?.[language] || 'Forgot Password?'}
               </button>
             </div>
           </form>
