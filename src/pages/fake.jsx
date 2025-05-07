@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import Modal from '../components/Modal';
 import { AppContext } from '../AppContext';
 
-const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, onAddNextOfKin, onLogout, onUpdateChild, onUpdateNextOfKin }) => {
+const PersonalInfoPage = ({ user, onUpdateUser, onAddChild, onAddNextOfKin, onLogout }) => {
   const { t, language, formatCurrency } = useContext(AppContext);
 
   // Mock user data (replace with real data from props/context/API)
@@ -22,15 +22,6 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
     annualIncome: user?.annualIncome || 100000,
     netWorth: user?.netWorth || 500000,
     taxId: user?.taxId || '123-45-6789',
-    bankAccounts: user?.bankAccounts || [
-        {
-          accountName: "Compte 1",
-          bankName: 'Banque Lumière',
-          accountType: 'Compte courant',
-          accountNumber: 'FR76 1234 5678 9123 4567 8901 234',
-          approxBalance: "5 320.75",
-        },
-    ],
     maritalStatus: user?.maritalStatus || 'Married',
     spouse: user?.spouse || {
       birthName: 'Jane Smith',
@@ -114,12 +105,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
     email: '',
     relationship: ''
   });
-  const [editChildForm, setEditChildForm] = useState(null);
-  const [editNextOfKinForm, setEditNextOfKinForm] = useState(null);
-  const [isEditChildModalOpen, setIsEditChildModalOpen] = useState(false);
-  const [isEditNextOfKinModalOpen, setIsEditNextOfKinModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAddBankAccountModalOpen, setIsAddBankAccountModalOpen] = useState(false);
   const [isAddChildModalOpen, setIsAddChildModalOpen] = useState(false);
   const [isAddNextOfKinModalOpen, setIsAddNextOfKinModalOpen] = useState(false);
   const [error, setError] = useState('');
@@ -196,61 +182,6 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
     onUpdateUser(updatedData);
     setSuccess(t('saveSuccess')?.[language] || 'Personal information saved successfully');
     setIsEditModalOpen(false);
-  };
-
-  const [addBankAccountForm, setAddBankAccountForm] = useState({
-    accountName: '',
-    bankName: '',
-    accountType: '',
-    accountNumber: '',
-    approxBalance: ''
-  });
-  const [bankAccountError, setBankAccountError] = useState('');
-  const [bankAccountSuccess, setBankAccountSuccess] = useState('');
-
-  const handleAddBankAccountChange = (e) => {
-    const { name, value } = e.target;
-    setAddBankAccountForm((prev) => ({ ...prev, [name]: value }));
-    setBankAccountError('');
-    setBankAccountSuccess('');
-  };
-
-  const handleAddBankAccountSubmit = (e) => {
-    e.preventDefault();
-
-    // Validation
-    const { accountName, bankName, accountType, accountNumber, approxBalance } = addBankAccountForm;
-    if (!accountName || !bankName || !accountType || !accountNumber || !approxBalance) {
-      setBankAccountError(t('requiredFields') || 'All fields are required');
-      return;
-    }
-
-    if (!/^\d+(\.\d{1,2})?$/.test(approxBalance) && isNaN(parseFloat(approxBalance))) {
-      setBankAccountError(t('invalidBalance') || 'Approximate balance must be a valid number');
-      return;
-    }
-
-    // Add bank account
-    const newBankAccount = {
-      ...addBankAccountForm,
-      id: Date.now(),
-      approxBalance: parseFloat(approxBalance).toFixed(2)
-    };
-    onAddBankAccount(newBankAccount);
-
-    // Reset form and show success
-    setAddBankAccountForm({
-      accountName: '',
-      bankName: '',
-      accountType: '',
-      accountNumber: '',
-      approxBalance: ''
-    });
-    setBankAccountSuccess(t('bankAccountAdded') || 'Bank account added successfully');
-    setTimeout(() => {
-      setIsAddBankAccountModalOpen(false);
-      setBankAccountSuccess('');
-    }, 1500);
   };
 
   const handleAddChildChange = (e) => {
@@ -354,100 +285,6 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
     setIsAddNextOfKinModalOpen(false);
   };
 
-  const handleEditChildClick = (child) => {
-    setEditChildForm(child);
-    setIsEditChildModalOpen(true);
-    setChildError('');
-    setChildSuccess('');
-  };
-
-  const handleEditNextOfKinClick = (kin) => {
-    setEditNextOfKinForm(kin);
-    setIsEditNextOfKinModalOpen(true);
-    setNextOfKinError('');
-    setNextOfKinSuccess('');
-  };
-
-  const handleEditChildChange = (e) => {
-    const { name, value } = e.target;
-    setEditChildForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleEditNextOfKinChange = (e) => {
-    const { name, value } = e.target;
-    setEditNextOfKinForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-//   const validateChildForm = (form) => {
-//     if (!form.birthName.trim()) {
-//       setChildError(t('requiredField')?.[language] || 'Birth Name is required');
-//       return false;
-//     }
-//     if (!form.firstNames.trim()) {
-//       setChildError(t('requiredField')?.[language] || 'First Name(s) is required');
-//       return false;
-//     }
-//     if (form.email && !form.email.includes('@')) {
-//       setChildError(t('invalidEmail')?.[language] || 'Invalid Email');
-//       return false;
-//     }
-//     return true;
-//   };
-
-//   const validateNextOfKinForm = (form) => {
-//     if (!form.birthName.trim()) {
-//       setNextOfKinError(t('requiredField')?.[language] || 'Birth Name is required');
-//       return false;
-//     }
-//     if (!form.firstNames.trim()) {
-//       setNextOfKinError(t('requiredField')?.[language] || 'First Name(s) is required');
-//       return false;
-//     }
-//     if (form.email && !form.email.includes('@')) {
-//       setNextOfKinError(t('invalidEmail')?.[language] || 'Invalid Email');
-//       return false;
-//     }
-//     return true;
-//   };
-
-  const handleEditChildSubmit = (e) => {
-    e.preventDefault();
-    setChildError('');
-    setChildSuccess('');
-
-    if (!validateChildForm(editChildForm)) return;
-
-    console.log('Updating child:', editChildForm);
-    onUpdateChild(editChildForm);
-    setFormData((prev) => ({
-      ...prev,
-      children: prev.children.map((child) =>
-        child.id === editChildForm.id ? editChildForm : child
-      )
-    }));
-    setChildSuccess(t('childSaveSuccess')?.[language] || 'Child updated successfully');
-    setIsEditChildModalOpen(false);
-  };
-
-  const handleEditNextOfKinSubmit = (e) => {
-    e.preventDefault();
-    setNextOfKinError('');
-    setNextOfKinSuccess('');
-
-    if (!validateNextOfKinForm(editNextOfKinForm)) return;
-
-    console.log('Updating next of kin:', editNextOfKinForm);
-    onUpdateNextOfKin(editNextOfKinForm);
-    setFormData((prev) => ({
-      ...prev,
-      nextOfKin: prev.nextOfKin.map((kin) =>
-        kin.id === editNextOfKinForm.id ? editNextOfKinForm : kin
-      )
-    }));
-    setNextOfKinSuccess(t('nextOfKinSaveSuccess')?.[language] || 'Next of kin updated successfully');
-    setIsEditNextOfKinModalOpen(false);
-  };
-
   const handleDownloadDeclaration = () => {
     console.log('Download declaration clicked');
     alert(t('downloadDeclarationPlaceholder')?.[language] || 'Downloading declaration...');
@@ -460,7 +297,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
       <Sidebar activeLink="Personal Info" onLogout={onLogout} />
       <div className="flex-1 md:ml-64 p-4 sm:p-6 lg:p-8">
         <Header
-          onText={t('personalInformation')}
+          onText={t('personalInformation')?.[language] || 'Personal Information'}
           onUserName={userName}
           onLogout={onLogout}
           onHandleDownloadDeclaration={handleDownloadDeclaration}
@@ -469,13 +306,13 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
           <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm">
             <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
               <h2 className="text-xl font-semibold text-gray-900">
-                {t('personalInformation')}
+                {t('personalInformation')?.[language] || 'Personal Information'}
               </h2>
               <button
                 onClick={handleEditClick}
                 className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
               >
-                {t('edit')}
+                {t('edit')?.[language] || 'Edit'}
               </button>
             </div>
             {success && (
@@ -486,12 +323,12 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             {/* Personal Details */}
             <div className="space-y-4 border-b border-gray-200 pb-6 mb-6">
               <h3 className="text-lg font-semibold text-gray-900">
-                {t('personalDetails')}
+                {t('personalDetails')?.[language] || 'Personal Details'}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('firstName')}
+                    {t('firstName')?.[language] || 'First Name'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                     <svg
@@ -518,7 +355,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('lastName')}
+                    {t('lastName')?.[language] || 'Last Name'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                     <svg
@@ -545,7 +382,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('dateOfBirth')}
+                    {t('dateOfBirth')?.[language] || 'Date of Birth'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                     <svg
@@ -575,12 +412,12 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             {/* Contact Information */}
             <div className="space-y-4 border-b border-gray-200 pb-6 mb-6">
               <h3 className="text-lg font-semibold text-gray-900">
-                {t('contactInformation')}
+                {t('contactInformation')?.[language] || 'Contact Information'}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('email')}
+                    {t('email')?.[language] || 'Email'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                     <svg
@@ -607,7 +444,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('phone')}
+                    {t('phone')?.[language] || 'Phone Number'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                     <svg
@@ -634,7 +471,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div className="sm:col-span-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('street')}
+                    {t('street')?.[language] || 'Street Address'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                     <svg
@@ -661,7 +498,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('city')}
+                    {t('city')?.[language] || 'City'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                     <svg
@@ -688,7 +525,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('state')}
+                    {t('state')?.[language] || 'State'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                     <svg
@@ -715,7 +552,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('zip')}
+                    {t('zip')?.[language] || 'ZIP Code'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                     <svg
@@ -742,7 +579,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('country')}
+                    {t('country')?.[language] || 'Country'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                     <svg
@@ -772,12 +609,12 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             {/* Financial Information */}
             <div className="space-y-4 border-b border-gray-200 pb-6 mb-6">
               <h3 className="text-lg font-semibold text-gray-900">
-                {t('financialInformation')}
+                {t('financialInformation')?.[language] || 'Financial Information'}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('annualIncome')}
+                    {t('annualIncome')?.[language] || 'Annual Income'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                     <svg
@@ -804,7 +641,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('netWorth')}
+                    {t('netWorth')?.[language] || 'Net Worth'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                     <svg
@@ -831,7 +668,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('taxId')}
+                    {t('taxId')?.[language] || 'Tax ID Number'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                     <svg
@@ -857,48 +694,16 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                   </div>
                 </div>
               </div>
-            {/* Bank Accounts */}
-            <div className="space-y-4 mt-6">
-                <h4 className="text-md font-medium text-gray-800">
-                  {t('bankAccounts')}
-                </h4>
-                {formData.bankAccounts.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {formData.bankAccounts.map((account) => (
-                      <div
-                        key={account.accountNumber}
-                        className="p-4 bg-gray-50 rounded-lg shadow-sm hover:bg-gray-100 hover:-translate-y-1 transition-all duration-200"
-                      >
-                        <p className="text-gray-900 font-medium">{account.accountName}</p>
-                        <p className="text-sm text-gray-600">{t('bankName')}: {account.birthName}</p>
-                        <p className="text-sm text-gray-600">{t('accountType')}: {account.accountType}</p>
-                        <p className="text-sm text-gray-600">{t('accountNumber')}: {account.accountNumber}</p>
-                        <p className="text-sm text-gray-600">{t('approxBalance')}: {account.approxBalance}</p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-600">{t('noBankAccounts')}</p>
-                )}
-                <div className="flex justify-center mt-4">
-                  <button
-                    onClick={() => setIsAddBankAccountModalOpen(true)}
-                    className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
-                  >
-                    {t('addBankAccount')}
-                  </button>
-                </div>
-            </div>
             </div>
             {/* Family Section */}
             <div className="space-y-4 border-b border-gray-200 pb-6 mb-6">
               <h3 className="text-lg font-semibold text-gray-900">
-                {t('family')}
+                {t('family')?.[language] || 'Family'}
               </h3>
               {/* Family Situation */}
               <div className="space-y-4">
                 <h4 className="text-md font-medium text-gray-800">
-                  {t('maritalStatus')}
+                  {t('maritalStatus')?.[language] || 'Marital Status'}
                 </h4>
                 <div className="grid grid-cols-1 gap-4">
                   <div>
@@ -931,12 +736,12 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
               {formData.spouse && (
                 <div className="space-y-4 mt-6">
                   <h4 className="text-md font-medium text-gray-800">
-                    {t('spouse')}
+                    {t('spouse')?.[language] || 'Spouse/Partner'}
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        {t('birthName')}
+                        {t('birthName')?.[language] || 'Birth Name'}
                       </label>
                       <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                         <svg
@@ -963,7 +768,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        {t('usedName')}
+                        {t('usedName')?.[language] || 'Used Name'}
                       </label>
                       <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                         <svg
@@ -990,7 +795,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        {t('firstNames')}
+                        {t('firstNames')?.[language] || 'First Name(s)'}
                       </label>
                       <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                         <svg
@@ -1017,7 +822,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        {t('dateOfBirth')}
+                        {t('dateOfBirth')?.[language] || 'Date of Birth'}
                       </label>
                       <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                         <svg
@@ -1044,7 +849,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        {t('placeOfBirth')}
+                        {t('placeOfBirth')?.[language] || 'Place of Birth'}
                       </label>
                       <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                         <svg
@@ -1071,7 +876,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        {t('status')}
+                        {t('status')?.[language] || 'Status'}
                       </label>
                       <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                         <svg
@@ -1098,7 +903,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                     </div>
                     <div className="sm:col-span-2">
                       <label className="block text-sm font-medium text-gray-700">
-                        {t('street')}
+                        {t('street')?.[language] || 'Street Address'}
                       </label>
                       <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                         <svg
@@ -1125,7 +930,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        {t('city')}
+                        {t('city')?.[language] || 'City'}
                       </label>
                       <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                         <svg
@@ -1152,7 +957,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        {t('state')}
+                        {t('state')?.[language] || 'State'}
                       </label>
                       <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                         <svg
@@ -1179,7 +984,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        {t('zip')}
+                        {t('zip')?.[language] || 'ZIP Code'}
                       </label>
                       <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                         <svg
@@ -1206,7 +1011,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        {t('country')}
+                        {t('country')?.[language] || 'Country'}
                       </label>
                       <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                         <svg
@@ -1233,7 +1038,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        {t('phone')}
+                        {t('phone')?.[language] || 'Phone Number'}
                       </label>
                       <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                         <svg
@@ -1260,7 +1065,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        {t('email')}
+                        {t('email')?.[language] || 'Email'}
                       </label>
                       <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-gray-100">
                         <svg
@@ -1291,7 +1096,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
               {/* Children */}
               <div className="space-y-4 mt-6">
                 <h4 className="text-md font-medium text-gray-800">
-                  {t('children')}
+                  {t('children')?.[language] || 'Children'}
                 </h4>
                 {formData.children.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1301,25 +1106,25 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                         className="p-4 bg-gray-50 rounded-lg shadow-sm hover:bg-gray-100 hover:-translate-y-1 transition-all duration-200"
                       >
                         <p className="text-gray-900 font-medium">{child.firstNames}</p>
-                        <p className="text-sm text-gray-600">{t('birthName')}: {child.birthName}</p>
+                        <p className="text-sm text-gray-600">{t('birthName')?.[language] || 'Birth Name'}: {child.birthName}</p>
                         {child.dateOfBirth && (
-                          <p className="text-sm text-gray-600">{t('dateOfBirth')}: {child.dateOfBirth}</p>
+                          <p className="text-sm text-gray-600">{t('dateOfBirth')?.[language] || 'Date of Birth'}: {child.dateOfBirth}</p>
                         )}
                         {child.email && (
-                          <p className="text-sm text-gray-600">{t('email')}: {child.email}</p>
+                          <p className="text-sm text-gray-600">{t('email')?.[language] || 'Email'}: {child.email}</p>
                         )}
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-600">{t('noChildren')}</p>
+                  <p className="text-gray-600">{t('noChildren')?.[language] || 'No children added'}</p>
                 )}
                 <div className="flex justify-center mt-4">
                   <button
                     onClick={() => setIsAddChildModalOpen(true)}
                     className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
                   >
-                    {t('addChild')}
+                    {t('addChild')?.[language] || 'Add Child'}
                   </button>
                 </div>
               </div>
@@ -1327,7 +1132,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             {/* Next of Kin Section */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-900">
-                {t('nextOfKin')}
+                {t('nextOfKin')?.[language] || 'Next of Kin'}
               </h3>
               {formData.nextOfKin.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1337,25 +1142,25 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                       className="p-4 bg-gray-50 rounded-lg shadow-sm hover:bg-gray-100 hover:-translate-y-1 transition-all duration-200"
                     >
                       <p className="text-gray-900 font-medium">{kin.firstNames}</p>
-                      <p className="text-sm text-gray-600">{t('birthName')}: {kin.birthName}</p>
+                      <p className="text-sm text-gray-600">{t('birthName')?.[language] || 'Birth Name'}: {kin.birthName}</p>
                       {kin.relationship && (
-                        <p className="text-sm text-gray-600">{t('relationship')}: {kin.relationship}</p>
+                        <p className="text-sm text-gray-600">{t('relationship')?.[language] || 'Relationship'}: {kin.relationship}</p>
                       )}
                       {kin.email && (
-                        <p className="text-sm text-gray-600">{t('email')}: {kin.email}</p>
+                        <p className="text-sm text-gray-600">{t('email')?.[language] || 'Email'}: {kin.email}</p>
                       )}
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-600">{t('noNextOfKin')}</p>
+                <p className="text-gray-600">{t('noNextOfKin')?.[language] || 'No next of kin added'}</p>
               )}
               <div className="flex justify-center mt-4">
                 <button
                   onClick={() => setIsAddNextOfKinModalOpen(true)}
                   className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
                 >
-                  {t('addNextOfKin')}
+                  {t('addNextOfKin')?.[language] || 'Add Next of Kin'}
                 </button>
               </div>
             </div>
@@ -1366,8 +1171,8 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
       <Modal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        title={t('edit')}
-        modalWidth="max-w-6xl"
+        title={t('edit')?.[language] || 'Edit Personal Information'}
+        maxWidth="max-w-3xl"
         padding="p-8"
         maxHeight="max-h-[80vh] overflow-y-auto"
       >
@@ -1378,12 +1183,12 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
           {/* Personal Details */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900">
-              {t('personalDetails')}
+              {t('personalDetails')?.[language] || 'Personal Details'}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  {t('firstName')}
+                  {t('firstName')?.[language] || 'First Name'}
                 </label>
                 <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                   <svg
@@ -1412,7 +1217,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  {t('lastName')}
+                  {t('lastName')?.[language] || 'Last Name'}
                 </label>
                 <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                   <svg
@@ -1441,7 +1246,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  {t('dateOfBirth')}
+                  {t('dateOfBirth')?.[language] || 'Date of Birth'}
                 </label>
                 <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                   <svg
@@ -1472,12 +1277,12 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
           {/* Contact Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900">
-              {t('contactInformation')}
+              {t('contactInformation')?.[language] || 'Contact Information'}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  {t('email')}
+                  {t('email')?.[language] || 'Email'}
                 </label>
                 <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                   <svg
@@ -1506,7 +1311,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  {t('phone')}
+                  {t('phone')?.[language] || 'Phone Number'}
                 </label>
                 <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                   <svg
@@ -1534,7 +1339,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-sm font-medium text-gray-700">
-                  {t('street')}
+                  {t('street')?.[language] || 'Street Address'}
                 </label>
                 <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                   <svg
@@ -1562,7 +1367,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  {t('city')}
+                  {t('city')?.[language] || 'City'}
                 </label>
                 <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                   <svg
@@ -1590,7 +1395,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
               </div>
               <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('state')}
+                {t('state')?.[language] || 'State'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -1618,7 +1423,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('zip')}
+                {t('zip')?.[language] || 'ZIP Code'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -1646,7 +1451,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('country')}
+                {t('country')?.[language] || 'Country'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -1677,12 +1482,12 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
         {/* Financial Information */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">
-            {t('financialInformation')}
+            {t('financialInformation')?.[language] || 'Financial Information'}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('annualIncome')}
+                {t('annualIncome')?.[language] || 'Annual Income'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -1710,7 +1515,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('netWorth')}
+                {t('netWorth')?.[language] || 'Net Worth'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -1738,7 +1543,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('taxId')}
+                {t('taxId')?.[language] || 'Tax ID Number'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -1764,17 +1569,16 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 />
               </div>
             </div>
-              
           </div>
         </div>
         {/* Family Section */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">
-            {t('family')}
+            {t('family')?.[language] || 'Family'}
           </h3>
           <div className="space-y-4">
             <h4 className="text-md font-medium text-gray-800">
-              {t('maritalStatus')}
+              {t('maritalStatus')?.[language] || 'Marital Status'}
             </h4>
             <div className="grid grid-cols-1 gap-4">
               <div>
@@ -1812,12 +1616,12 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
           {(editForm.maritalStatus === 'Married' || editForm.maritalStatus === 'Partnered') && (
             <div className="space-y-4 mt-6">
               <h4 className="text-md font-medium text-gray-800">
-                {t('spouse')}
+                {t('spouse')?.[language] || 'Spouse/Partner'}
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('birthName')}
+                    {t('birthName')?.[language] || 'Birth Name'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                     <svg
@@ -1846,7 +1650,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('usedName')}
+                    {t('usedName')?.[language] || 'Used Name'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                     <svg
@@ -1874,7 +1678,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('firstNames')}
+                    {t('firstNames')?.[language] || 'First Name(s)'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                     <svg
@@ -1903,7 +1707,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('dateOfBirth')}
+                    {t('dateOfBirth')?.[language] || 'Date of Birth'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                     <svg
@@ -1931,7 +1735,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('placeOfBirth')}
+                    {t('placeOfBirth')?.[language] || 'Place of Birth'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                     <svg
@@ -1959,7 +1763,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('status')}
+                    {t('status')?.[language] || 'Status'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                     <svg
@@ -1987,7 +1791,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div className="sm:col-span-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('street')}
+                    {t('street')?.[language] || 'Street Address'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                     <svg
@@ -2015,7 +1819,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('city')}
+                    {t('city')?.[language] || 'City'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                     <svg
@@ -2043,7 +1847,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('state')}
+                    {t('state')?.[language] || 'State'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                     <svg
@@ -2071,7 +1875,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('zip')}
+                    {t('zip')?.[language] || 'ZIP Code'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                     <svg
@@ -2099,7 +1903,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('country')}
+                    {t('country')?.[language] || 'Country'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                     <svg
@@ -2127,7 +1931,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('phone')}
+                    {t('phone')?.[language] || 'Phone Number'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                     <svg
@@ -2155,7 +1959,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('email')}
+                    {t('email')?.[language] || 'Email'}
                   </label>
                   <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                     <svg
@@ -2191,209 +1995,23 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             onClick={() => setIsEditModalOpen(false)}
             className="bg-gray-300 text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium"
           >
-            {t('cancel')}
+            {t('cancel')?.[language] || 'Cancel'}
           </button>
           <button
             type="submit"
             className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
           >
-            {t('save')}
+            {t('save')?.[language] || 'Save'}
           </button>
         </div>
       </form>
     </Modal>
     {/* Add Child Modal */}
     <Modal
-        isOpen={isAddBankAccountModalOpen}
-        onClose={() => setIsAddBankAccountModalOpen(false)}
-        title={t('addBankAccount')?.[language] || 'Add Bank Account'}
-        modalWidth="max-w-6xl"
-        padding="p-8"
-        maxHeight="max-h-[80vh] overflow-y-auto"
-    >
-        <form onSubmit={handleAddBankAccountSubmit} className="space-y-6">
-            {bankAccountError && (
-            <div className="text-red-500 text-sm text-center">{bankAccountError}</div>
-            )}
-            {bankAccountSuccess && (
-            <div className="text-green-500 text-sm text-center">{bankAccountSuccess}</div>
-            )}
-            <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">
-                {t('bankAccountDetails')}
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                <label className="block text-sm font-medium text-gray-700">
-                    {t('accountName')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                    <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                    >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M3 6h18M3 10h18M3 14h18M3 18h18"
-                    />
-                    </svg>
-                    <input
-                    type="text"
-                    name="accountName"
-                    value={addBankAccountForm.accountName}
-                    onChange={handleAddBankAccountChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                    required
-                    />
-                </div>
-                </div>
-                <div>
-                <label className="block text-sm font-medium text-gray-700">
-                    {t('bankName')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                    <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                    >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M3 8l9-6 9 6v12a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"
-                    />
-                    </svg>
-                    <input
-                    type="text"
-                    name="bankName"
-                    value={addBankAccountForm.bankName}
-                    onChange={handleAddBankAccountChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                    required
-                    />
-                </div>
-                </div>
-                <div>
-                <label className="block text-sm font-medium text-gray-700">
-                    {t('accountType')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                    <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                    >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M3 6h18M3 10h18M3 14h18M3 18h18"
-                    />
-                    </svg>
-                    <input
-                    type="text"
-                    name="accountType"
-                    value={addBankAccountForm.accountType}
-                    onChange={handleAddBankAccountChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                    required
-                    />
-                </div>
-                </div>
-                <div>
-                <label className="block text-sm font-medium text-gray-700">
-                    {t('accountNumber')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                    <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                    >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M3 6h18M3 10h18M3 14h18M3 18h18"
-                    />
-                    </svg>
-                    <input
-                    type="text"
-                    name="accountNumber"
-                    value={addBankAccountForm.accountNumber}
-                    onChange={handleAddBankAccountChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                    required
-                    />
-                </div>
-                </div>
-                <div>
-                <label className="block text-sm font-medium text-gray-700">
-                    {t('approxBalance')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                    <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                    >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                    </svg>
-                    <input
-                    type="text"
-                    name="approxBalance"
-                    value={addBankAccountForm.approxBalance}
-                    onChange={handleAddBankAccountChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                    required
-                    />
-                </div>
-                </div>
-            </div>
-            </div>
-            <div className="flex justify-end gap-4 mt-6">
-            <button
-                type="button"
-                onClick={() => setIsAddBankAccountModalOpen(false)}
-                className="bg-gray-300 text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium"
-            >
-                {t('cancel')}
-            </button>
-            <button
-                type="submit"
-                className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
-            >
-                {t('save')}
-            </button>
-            </div>
-        </form>
-    </Modal>
-
-    {/* Add Child Modal */}
-    <Modal
       isOpen={isAddChildModalOpen}
       onClose={() => setIsAddChildModalOpen(false)}
       title={t('addChild')?.[language] || 'Add Child'}
-      modalWidth="max-w-6xl"
+      maxWidth="max-w-3xl"
       padding="p-8"
       maxHeight="max-h-[80vh] overflow-y-auto"
     >
@@ -2406,12 +2024,12 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
         )}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">
-            {t('childDetails')}
+            {t('childDetails')?.[language] || 'Child Details'}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('birthName')}
+                {t('birthName')?.[language] || 'Birth Name'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -2440,7 +2058,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('usedName')}
+                {t('usedName')?.[language] || 'Used Name'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -2468,7 +2086,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('firstNames')}
+                {t('firstNames')?.[language] || 'First Name(s)'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -2497,7 +2115,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('dateOfBirth')}
+                {t('dateOfBirth')?.[language] || 'Date of Birth'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -2525,7 +2143,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('placeOfBirth')}
+                {t('placeOfBirth')?.[language] || 'Place of Birth'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -2553,7 +2171,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </div>
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-gray-700">
-                {t('street')}
+                {t('street')?.[language] || 'Street Address'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -2581,7 +2199,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('city')}
+                {t('city')?.[language] || 'City'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -2609,7 +2227,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('state')}
+                {t('state')?.[language] || 'State'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -2637,7 +2255,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('zip')}
+                {t('zip')?.[language] || 'ZIP Code'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -2665,7 +2283,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('country')}
+                {t('country')?.[language] || 'Country'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -2693,7 +2311,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('phone')}
+                {t('phone')?.[language] || 'Phone Number'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -2721,7 +2339,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                {t('email')}
+                {t('email')?.[language] || 'Email'}
               </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
                 <svg
@@ -2755,1210 +2373,24 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             onClick={() => setIsAddChildModalOpen(false)}
             className="bg-gray-300 text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium"
           >
-            {t('cancel')}
+            {t('cancel')?.[language] || 'Cancel'}
           </button>
           <button
             type="submit"
             className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
           >
-            {t('save')}
+            {t('save')?.[language] || 'Save'}
           </button>
         </div>
       </form>
     </Modal>
-    
-      {/* Add Next of Kin Modal */}
-      <Modal
-        isOpen={isAddNextOfKinModalOpen}
-        onClose={() => setIsAddNextOfKinModalOpen(false)}
-        title={t('addNextOfKin')}
-        modalWidth="max-w-6xl"
-        padding="p-8"
-        maxHeight="max-h-[80vh] overflow-y-auto"
-      >
-        <form onSubmit={handleAddNextOfKinSubmit} className="space-y-6">
-          {nextOfKinError && (
-            <div className="text-red-500 text-sm text-center">{nextOfKinError}</div>
-          )}
-          {nextOfKinSuccess && (
-            <div className="text-green-500 text-sm text-center">{nextOfKinSuccess}</div>
-          )}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">
-              {t('nextOfKinDetails')}
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('birthName')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="birthName"
-                    value={addNextOfKinForm.birthName}
-                    onChange={handleAddNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('usedName')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="usedName"
-                    value={addNextOfKinForm.usedName}
-                    onChange={handleAddNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('firstNames')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="firstNames"
-                    value={addNextOfKinForm.firstNames}
-                    onChange={handleAddNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('dateOfBirth')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <input
-                    type="date"
-                    name="dateOfBirth"
-                    value={addNextOfKinForm.dateOfBirth}
-                    onChange={handleAddNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('placeOfBirth')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="placeOfBirth"
-                    value={addNextOfKinForm.placeOfBirth}
-                    onChange={handleAddNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('relationship')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 005.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="relationship"
-                    value={addNextOfKinForm.relationship}
-                    onChange={handleAddNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('street')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="street"
-                    value={addNextOfKinForm.street}
-                    onChange={handleAddNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('city')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="city"
-                    value={addNextOfKinForm.city}
-                    onChange={handleAddNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('state')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="state"
-                    value={addNextOfKinForm.state}
-                    onChange={handleAddNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('zip')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="zip"
-                    value={addNextOfKinForm.zip}
-                    onChange={handleAddNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('country')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="country"
-                    value={addNextOfKinForm.country}
-                    onChange={handleAddNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('phone')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 5h18M9 3v2m6-2v2M3 19h18M5 7h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2z"
-                    />
-                  </svg>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={addNextOfKinForm.phone}
-                    onChange={handleAddNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('email')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 8l9-6 9 6v12a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"
-                    />
-                  </svg>
-                  <input
-                    type="email"
-                    name="email"
-                    value={addNextOfKinForm.email}
-                    onChange={handleAddNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex justify-end gap-4 mt-6">
-            <button
-              type="button"
-              onClick={() => setIsAddNextOfKinModalOpen(false)}
-              className="bg-gray-300 text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium"
-            >
-              {t('cancel')}
-            </button>
-            <button
-              type="submit"
-              className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
-            >
-              {t('save')}
-            </button>
-          </div>
-        </form>
-      </Modal>
-      {/* Edit Child Modal */}
-      <Modal
-        isOpen={isEditChildModalOpen}
-        onClose={() => setIsEditChildModalOpen(false)}
-        title={t('editChild')}
-        modalWidth="max-w-6xl"
-        padding="p-8"
-        maxHeight="max-h-[80vh] overflow-y-auto"
-      >
-        <form onSubmit={handleEditChildSubmit} className="space-y-6">
-          {childError && (
-            <div className="text-red-500 text-sm text-center">{childError}</div>
-          )}
-          {childSuccess && (
-            <div className="text-green-500 text-sm text-center">{childSuccess}</div>
-          )}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">
-              {t('childDetails')}
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('birthName')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="birthName"
-                    value={editChildForm?.birthName || ''}
-                    onChange={handleEditChildChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('usedName')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="usedName"
-                    value={editChildForm?.usedName || ''}
-                    onChange={handleEditChildChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('firstNames')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="firstNames"
-                    value={editChildForm?.firstNames || ''}
-                    onChange={handleEditChildChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('dateOfBirth')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <input
-                    type="date"
-                    name="dateOfBirth"
-                    value={editChildForm?.dateOfBirth || ''}
-                    onChange={handleEditChildChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('placeOfBirth')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="placeOfBirth"
-                    value={editChildForm?.placeOfBirth || ''}
-                    onChange={handleEditChildChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('street')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="street"
-                    value={editChildForm?.street || ''}
-                    onChange={handleEditChildChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('city')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="city"
-                    value={editChildForm?.city || ''}
-                    onChange={handleEditChildChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('state')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="state"
-                    value={editChildForm?.state || ''}
-                    onChange={handleEditChildChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('zip')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="zip"
-                    value={editChildForm?.zip || ''}
-                    onChange={handleEditChildChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('country')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="country"
-                    value={editChildForm?.country || ''}
-                    onChange={handleEditChildChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('phone')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 5h18M9 3v2m6-2v2M3 19h18M5 7h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2z"
-                    />
-                  </svg>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={editChildForm?.phone || ''}
-                    onChange={handleEditChildChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('email')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 8l9-6 9 6v12a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"
-                    />
-                  </svg>
-                  <input
-                    type="email"
-                    name="email"
-                    value={editChildForm?.email || ''}
-                    onChange={handleEditChildChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex justify-end gap-4 mt-6">
-            <button
-              type="button"
-              onClick={() => setIsEditChildModalOpen(false)}
-              className="bg-gray-300 text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium"
-            >
-              {t('cancel')}
-            </button>
-            <button
-              type="submit"
-              className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
-            >
-              {t('save')}
-            </button>
-          </div>
-        </form>
-      </Modal>
-      {/* Edit Next of Kin Modal */}
-      <Modal
-        isOpen={isEditNextOfKinModalOpen}
-        onClose={() => setIsEditNextOfKinModalOpen(false)}
-        title={t('editNextOfKin')}
-        modalWidth="max-w-6xl"
-        padding="p-8"
-        maxHeight="max-h-[80vh] overflow-y-auto"
-      >
-        <form onSubmit={handleEditNextOfKinSubmit} className="space-y-6">
-          {nextOfKinError && (
-            <div className="text-red-500 text-sm text-center">{nextOfKinError}</div>
-          )}
-          {nextOfKinSuccess && (
-            <div className="text-green-500 text-sm text-center">{nextOfKinSuccess}</div>
-          )}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">
-              {t('nextOfKinDetails')}
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('birthName')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="birthName"
-                    value={editNextOfKinForm?.birthName || ''}
-                    onChange={handleEditNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('usedName')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="usedName"
-                    value={editNextOfKinForm?.usedName || ''}
-                    onChange={handleEditNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('firstNames')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="firstNames"
-                    value={editNextOfKinForm?.firstNames || ''}
-                    onChange={handleEditNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('dateOfBirth')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <input
-                    type="date"
-                    name="dateOfBirth"
-                    value={editNextOfKinForm?.dateOfBirth || ''}
-                    onChange={handleEditNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('placeOfBirth')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="placeOfBirth"
-                    value={editNextOfKinForm?.placeOfBirth || ''}
-                    onChange={handleEditNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('relationship')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 005.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="relationship"
-                    value={editNextOfKinForm?.relationship || ''}
-                    onChange={handleEditNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('street')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="street"
-                    value={editNextOfKinForm?.street || ''}
-                    onChange={handleEditNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('city')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="city"
-                    value={editNextOfKinForm?.city || ''}
-                    onChange={handleEditNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('state')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="state"
-                    value={editNextOfKinForm?.state || ''}
-                    onChange={handleEditNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('zip')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="zip"
-                    value={editNextOfKinForm?.zip || ''}
-                    onChange={handleEditNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('country')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    name="country"
-                    value={editNextOfKinForm?.country || ''}
-                    onChange={handleEditNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('phone')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 5h18M9 3v2m6-2v2M3 19h18M5 7h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2z"
-                    />
-                  </svg>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={editNextOfKinForm?.phone || ''}
-                    onChange={handleEditNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('email')}
-                </label>
-                <div className="mt-1 flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
-                  <svg
-                    className="h-5 w-5 text-gray-400 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 8l9-6 9 6v12a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"
-                    />
-                  </svg>
-                  <input
-                    type="email"
-                    name="email"
-                    value={editNextOfKinForm?.email || ''}
-                    onChange={handleEditNextOfKinChange}
-                    className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex justify-end gap-4 mt-6">
-            <button
-              type="button"
-              onClick={() => setIsEditNextOfKinModalOpen(false)}
-              className="bg-gray-300 text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium"
-            >
-              {t('cancel')}
-            </button>
-            <button
-              type="submit"
-              className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
-            >
-              {t('save')}
-            </button>
-          </div>
-        </form>
-      </Modal>
+    {/* Add Next of Kin Modal */}
     </div>
   );
 };
 
 export default PersonalInfoPage;
+
+
+
+                <DocumentVault assets={assets} onUploadDocument={onUploadDocument} />

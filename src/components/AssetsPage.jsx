@@ -132,7 +132,9 @@ const AssetsPage = ({ user, assets, onAddAsset, onEditAsset, onDeleteAsset, onLo
           </div>
         </div>
       </div>
-      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title={t('addAsset')}>
+      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title={t('addAsset')}
+        className=" max-w-2xl"
+        >
         <form onSubmit={handleAddSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">{t('name')}</label>

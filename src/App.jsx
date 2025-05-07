@@ -20,7 +20,26 @@ const App = () => {
 
   const handleLogin = (email, password) => {
     if (typeof email === 'string' && email.includes('@')) {
-      setUser({ email });
+      setUser({
+        email,
+        firstName: '',
+        lastName: '',
+        dateOfBirth: '',
+        phone: '',
+        street: '',
+        city: '',
+        state: '',
+        zip: '',
+        country: '',
+        annualIncome: 0,
+        netWorth: 0,
+        taxId: '',
+        bankAccounts: [],
+        maritalStatus: '',
+        spouse: null,
+        children: [],
+        nextOfKin: []
+      });
     } else {
       console.error('Invalid email:', email);
     }
@@ -30,6 +49,31 @@ const App = () => {
     setUser(null);
   };
 
+  const handleUpdateUser = (updatedData) => {
+    setUser(updatedData);
+  };
+
+  const handleAddChild = (newChild) => {
+    setUser((prev) => ({
+      ...prev,
+      children: [...prev.children, newChild]
+    }));
+  };
+
+  const handleAddBankAccount = (newBankAccount) => {
+    setUser((prev) => ({
+      ...prev,
+      bankAccount: [...prev.bankAccount, newBankAccount]
+    }));
+  };
+
+  const handleAddNextOfKin = (newNextOfKin) => {
+    setUser((prev) => ({
+      ...prev,
+      nextOfKin: [...prev.nextOfKin, newNextOfKin]
+    }));
+  };
+
   // Asset Handlers
   const handleAddAsset = (newAsset) => {
     setAssetsState([...assetsState, newAsset]);
@@ -37,14 +81,14 @@ const App = () => {
 
   const handleEditAsset = (updatedAsset) => {
     setAssetsState(
-      assetsState.map(asset =>
+      assetsState.map((asset) =>
         asset.id === updatedAsset.id ? updatedAsset : asset
       )
     );
   };
 
   const handleDeleteAsset = (assetId) => {
-    setAssetsState(assetsState.filter(asset => asset.id !== assetId));
+    setAssetsState(assetsState.filter((asset) => asset.id !== assetId));
   };
 
   // Debt Handlers
@@ -54,32 +98,38 @@ const App = () => {
 
   const handleEditDebt = (updatedDebt) => {
     setDebtsState(
-      debtsState.map(debt =>
+      debtsState.map((debt) =>
         debt.id === updatedDebt.id ? updatedDebt : debt
       )
     );
   };
 
   const handleDeleteDebt = (debtId) => {
-    setDebtsState(debtsState.filter(debt => debt.id !== debtId));
+    setDebtsState(debtsState.filter((debt) => debt.id !== debtId));
   };
 
   // Document Handlers
   const handleUploadDocument = (assetId, document) => {
+    console.log('onUploadDocument called:', { assetId, document });
     setAssetsState(
-      assetsState.map(asset =>
+      assetsState.map((asset) =>
         asset.id === assetId
           ? { ...asset, documents: [...asset.documents, document] }
           : asset
       )
     );
+    console.log('Updated assetsState:', assetsState);
   };
 
   const handleDeleteDocument = (assetId, document) => {
+    console.log('onDeleteDocument called:', { assetId, document });
     setAssetsState(
-      assetsState.map(asset =>
+      assetsState.map((asset) =>
         asset.id === assetId
-          ? { ...asset, documents: asset.documents.filter(doc => doc !== document) }
+          ? {
+              ...asset,
+              documents: asset.documents.filter((doc) => doc !== document)
+            }
           : asset
       )
     );
@@ -88,7 +138,9 @@ const App = () => {
   // Notification Handlers
   const handleDeleteNotification = (notificationId) => {
     setNotificationsState(
-      notificationsState.filter(notification => notification.id !== notificationId)
+      notificationsState.filter(
+        (notification) => notification.id !== notificationId
+      )
     );
   };
 
@@ -99,7 +151,7 @@ const App = () => {
 
   const handleEditFamilyMember = (updatedMember) => {
     setFamilyMembersState(
-      familyMembersState.map(member =>
+      familyMembersState.map((member) =>
         member.id === updatedMember.id ? updatedMember : member
       )
     );
@@ -107,7 +159,7 @@ const App = () => {
 
   const handleDeleteFamilyMember = (memberId) => {
     setFamilyMembersState(
-      familyMembersState.filter(member => member.id !== memberId)
+      familyMembersState.filter((member) => member.id !== memberId)
     );
   };
 
@@ -118,11 +170,7 @@ const App = () => {
           <Route
             path="/login"
             element={
-              user ? (
-                <Navigate to="/" />
-              ) : (
-                <Login onLogin={handleLogin} />
-              )
+              user ? <Navigate to="/" /> : <Login onLogin={handleLogin} />
             }
           />
           <Route
@@ -169,10 +217,10 @@ const App = () => {
               user ? (
                 <PersonalInfoPage
                   user={user}
-                  assets={assetsState}
-                  onAddAsset={handleAddAsset}
-                  onEditAsset={handleEditAsset}
-                  onDeleteAsset={handleDeleteAsset}
+                  onUpdateUser={handleUpdateUser}
+                  onAddBankAccount={handleAddBankAccount}
+                  onAddChild={handleAddChild}
+                  onAddNextOfKin={handleAddNextOfKin}
                   onLogout={handleLogout}
                 />
               ) : (

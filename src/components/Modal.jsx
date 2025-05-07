@@ -1,11 +1,11 @@
 import React from 'react';
 
-const Modal = ({ isOpen, onClose, title, children }) => {
+const Modal = ({ isOpen, onClose, title, children, modalWidth }) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md animate-modal-in">
+      <div className={`bg-white rounded-xl shadow-lg p-6 w-full ${modalWidth} mx-2 sm:mx-4 max-h-[90vh] overflow-y-auto max-w-md animate-modal-in`}>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
           <button onClick={onClose} className="text-gray-600 hover:text-gray-800">
