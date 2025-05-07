@@ -3,6 +3,7 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import Modal from '../components/Modal';
 import { AppContext } from '../AppContext';
+import { handleGenerateDeclaration } from '../components/PdfDeclarationGenerator';
 
 const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, onAddNextOfKin, onLogout, onUpdateChild, onUpdateNextOfKin }) => {
   const { t, language, formatCurrency } = useContext(AppContext);
@@ -85,6 +86,13 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
   });
 
   const [editForm, setEditForm] = useState(formData);
+  const [addBankAccountForm, setAddBankAccountForm] = useState({
+    accountName: '',
+    bankName: '',
+    accountType: '',
+    accountNumber: '',
+    approxBalance: ''
+  });
   const [addChildForm, setAddChildForm] = useState({
     birthName: '',
     usedName: '',
@@ -123,9 +131,11 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
   const [isAddChildModalOpen, setIsAddChildModalOpen] = useState(false);
   const [isAddNextOfKinModalOpen, setIsAddNextOfKinModalOpen] = useState(false);
   const [error, setError] = useState('');
+  const [bankAccountError, setBankAccountError] = useState('');
   const [childError, setChildError] = useState('');
   const [nextOfKinError, setNextOfKinError] = useState('');
   const [success, setSuccess] = useState('');
+  const [bankAccountSuccess, setBankAccountSuccess] = useState('');
   const [childSuccess, setChildSuccess] = useState('');
   const [nextOfKinSuccess, setNextOfKinSuccess] = useState('');
 
@@ -198,60 +208,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
     setIsEditModalOpen(false);
   };
 
-  const [addBankAccountForm, setAddBankAccountForm] = useState({
-    accountName: '',
-    bankName: '',
-    accountType: '',
-    accountNumber: '',
-    approxBalance: ''
-  });
-  const [bankAccountError, setBankAccountError] = useState('');
-  const [bankAccountSuccess, setBankAccountSuccess] = useState('');
-
-  const handleAddBankAccountChange = (e) => {
-    const { name, value } = e.target;
-    setAddBankAccountForm((prev) => ({ ...prev, [name]: value }));
-    setBankAccountError('');
-    setBankAccountSuccess('');
-  };
-
-  const handleAddBankAccountSubmit = (e) => {
-    e.preventDefault();
-
-    // Validation
-    const { accountName, bankName, accountType, accountNumber, approxBalance } = addBankAccountForm;
-    if (!accountName || !bankName || !accountType || !accountNumber || !approxBalance) {
-      setBankAccountError(t('requiredFields') || 'All fields are required');
-      return;
-    }
-
-    if (!/^\d+(\.\d{1,2})?$/.test(approxBalance) && isNaN(parseFloat(approxBalance))) {
-      setBankAccountError(t('invalidBalance') || 'Approximate balance must be a valid number');
-      return;
-    }
-
-    // Add bank account
-    const newBankAccount = {
-      ...addBankAccountForm,
-      id: Date.now(),
-      approxBalance: parseFloat(approxBalance).toFixed(2)
-    };
-    onAddBankAccount(newBankAccount);
-
-    // Reset form and show success
-    setAddBankAccountForm({
-      accountName: '',
-      bankName: '',
-      accountType: '',
-      accountNumber: '',
-      approxBalance: ''
-    });
-    setBankAccountSuccess(t('bankAccountAdded') || 'Bank account added successfully');
-    setTimeout(() => {
-      setIsAddBankAccountModalOpen(false);
-      setBankAccountSuccess('');
-    }, 1500);
-  };
+  
 
   const handleAddChildChange = (e) => {
     const { name, value } = e.target;
@@ -272,6 +229,46 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
       return false;
     }
     return true;
+  };
+
+  
+  const handleAddBankAccountChange = (e) => {
+    const { name, value } = e.target;
+    setAddBankAccountForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+
+  const validateBankAccountForm = () => {
+    if (!addBankAccountForm.bankName.trim()) {
+      setBankAccountError(t('requiredField'));
+      return false;
+    }
+    if (!addBankAccountForm.accountNumber.trim()) {
+      setBankAccountError(t('requiredField'));
+      return false;
+    }
+    return true;
+  };
+  const handleAddBankAccountSubmit = (e) => {
+    e.preventDefault();
+    setBankAccountError('');
+    setBankAccountSuccess('');
+
+    if (!validateBankAccountForm()) return;
+
+    const newBankAccount = { ...addBankAccountForm, id: Date.now() };
+    console.log('Adding bank account:', newBankAccount);
+    onAddBankAccount(newBankAccount);
+    setFormData((prev) => ({ ...prev, bankAccounts: [...prev.bankAccounts, newBankAccount] }));
+    setAddBankAccountForm({
+        accountName: '',
+        bankName: '',
+        accountType: '',
+        accountNumber: '',
+        approxBalance: ''
+    });
+    setBankAccountSuccess(t('BankAccountSaveSuccess'));
+    setIsAddBankAccountModalOpen(false);
   };
 
   const handleAddChildSubmit = (e) => {
@@ -471,6 +468,12 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
               <h2 className="text-xl font-semibold text-gray-900">
                 {t('personalInformation')}
               </h2>
+              <button
+                onClick={() => handleGenerateDeclaration(formData, t, language, setSuccess, setError)}
+                className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+                >
+                {t('generateDeclaration')}
+                </button>
               <button
                 onClick={handleEditClick}
                 className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
@@ -870,7 +873,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                         className="p-4 bg-gray-50 rounded-lg shadow-sm hover:bg-gray-100 hover:-translate-y-1 transition-all duration-200"
                       >
                         <p className="text-gray-900 font-medium">{account.accountName}</p>
-                        <p className="text-sm text-gray-600">{t('bankName')}: {account.birthName}</p>
+                        <p className="text-sm text-gray-600">{t('bankName')}: {account.bankName}</p>
                         <p className="text-sm text-gray-600">{t('accountType')}: {account.accountType}</p>
                         <p className="text-sm text-gray-600">{t('accountNumber')}: {account.accountNumber}</p>
                         <p className="text-sm text-gray-600">{t('approxBalance')}: {account.approxBalance}</p>
@@ -1799,11 +1802,11 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                     onChange={handleEditChange}
                     className="flex-1 appearance-none bg-transparent border-none focus:outline-none text-gray-900 sm:text-sm"
                   >
-                    <option value="Single">{t('single')?.[language] || 'Single'}</option>
-                    <option value="Married">{t('married')?.[language] || 'Married'}</option>
-                    <option value="Partnered">{t('partnered')?.[language] || 'Partnered'}</option>
-                    <option value="Divorced">{t('divorced')?.[language] || 'Divorced'}</option>
-                    <option value="Widowed">{t('widowed')?.[language] || 'Widowed'}</option>
+                    <option value="Single">{t('single')}</option>
+                    <option value="Married">{t('married')}</option>
+                    <option value="Partnered">{t('partnered')}</option>
+                    <option value="Divorced">{t('divorced')}</option>
+                    <option value="Widowed">{t('widowed')}</option>
                   </select>
                 </div>
               </div>

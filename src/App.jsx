@@ -63,7 +63,7 @@ const App = () => {
   const handleAddBankAccount = (newBankAccount) => {
     setUser((prev) => ({
       ...prev,
-      bankAccount: [...prev.bankAccount, newBankAccount]
+      bankAccount: [...prev.bankAccounts, newBankAccount]
     }));
   };
 

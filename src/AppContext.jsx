@@ -4,6 +4,7 @@ import React, { createContext, useState, useEffect } from 'react';
 const translations = {
   en: {
     welcome: 'Welcome',
+    dashboard: "Dashboard",
     logout: 'Logout',
     overview: 'Overview',
     netWorth: 'Net Worth',
@@ -113,6 +114,11 @@ const translations = {
     maritalStatus: "Marital Status",
     spouse: "Spouse",
     status: "Status",
+    married: "Married",
+    single: "Single",
+    partnered: "Partnered",
+    divorced: "Divorced",
+    widowed: "Widowed",
     addNextOfKin: "Add a Next of Kin",
     cancel: 'Cancel',
     save: 'Save',
@@ -146,10 +152,16 @@ const translations = {
     accessInformation: 'Access Information',
     accessInstructions: 'How to access this safe (do not include codes)',
     addSafe: 'Add Safe',
-
+    personalDeclaration: "Personal Information Declaration",requiredFields: 'All fields are required',
+    invalidBalance: 'Approximate balance must be a valid number',
+    generateDeclaration: 'Generate Declaration PDF',
+    generating: 'Generating...',
+    declarationGenerated: 'Declaration PDF generated successfully',
+    declarationError: 'Failed to generate declaration PDF',
   },
   fr: {
     welcome: 'Bienvenue',
+    dashboard: "Tableau de bord",
     logout: 'Se déconnecter',
     overview: 'Aperçu',
     netWorth: 'Valeur nette',
@@ -266,14 +278,23 @@ const translations = {
     contactInformation: "Informations de contact",
     firstName: "Prénom",
     lastName: "Nom de famille",
-    
+    generateDeclaration: 'Générer le PDF de déclaration',
+    generating: 'Génération en cours...',
+    declarationGenerated: 'PDF de déclaration généré avec succès',
+    declarationError: 'Échec de la génération du PDF de déclaration',
     bankAccounts: 'Comptes bancaires',
-    bankAccount1: 'Compte bancaire 1',
+    accountName: 'Nom du compte',
     bankName: 'Nom de la banque',
     accountType: 'Type de compte',
     accountNumber: 'Numéro de compte',
     approxBalance: 'Solde approximatif',
+    noBankAccounts: 'Aucun compte bancaire répertorié.',
     addBankAccount: 'Ajouter un compte bancaire',
+    saveSuccess: 'Informations personnelles enregistrées avec succès',
+
+    bankAccountAdded: 'Compte bancaire ajouté avec succès',
+    requiredFields: 'Tous les champs sont requis',
+    invalidBalance: 'Le solde approximatif doit être un nombre valide',
   
     investments: 'Investissements',
     investment1: 'Investissement 1',
@@ -299,8 +320,8 @@ const translations = {
 
 // Conversion rates (USD base)
 const conversionRates = {
-  USD: { USD: 1, EUR: 0.85, KES: 110 },
   EUR: { USD: 1.176, EUR: 1, KES: 129.41 },
+  USD: { USD: 1, EUR: 0.85, KES: 110 },
   KES: { USD: 0.00909, EUR: 0.00773, KES: 1 },
 };
 
@@ -335,13 +356,13 @@ export const AppProvider = ({ children }) => {
 
   const t = (key) => translations[language][key] || key;
 
-  const convertCurrency = (amount, fromCurrency = 'USD') => {
+  const convertCurrency = (amount, fromCurrency = 'EUR') => {
     if (typeof amount !== 'number') return 0;
     const rate = conversionRates[fromCurrency][currency];
     return Number((amount * rate).toFixed(2));
   };
 
-  const formatCurrency = (amount, fromCurrency = 'USD') => {
+  const formatCurrency = (amount, fromCurrency = 'EUR') => {
     const converted = convertCurrency(amount, fromCurrency);
     return `${currencySymbols[currency]}${converted.toLocaleString()}`;
   };
