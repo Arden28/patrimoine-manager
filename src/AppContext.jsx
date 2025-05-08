@@ -1,371 +1,43 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { translations } from './data/translation';
+import { conversionRates, currencySymbols } from './data/currencyRates';
 
-// Translation dictionaries
-const translations = {
-  en: {
-    welcome: 'Welcome',
-    dashboard: "Dashboard",
-    logout: 'Logout',
-    overview: 'Overview',
-    netWorth: 'Net Worth',
-    summary: 'Summary',
-    totalAssets: 'Total Assets',
-    totalDebts: 'Total Debts',
-    notifications: 'Notifications',
-    familyMembers: 'Family Members',
-    viewAllAssets: 'View All Assets',
-    viewAllDebts: 'View All Debts',
-    viewNotifications: 'View Notifications',
-    assetsDebts: 'Assets & Debts',
-    recentAssets: 'Recent Assets',
-    recentDebts: 'Recent Debts',
-    addAsset: 'Add Asset',
-    addDebt: 'Add Debt',
-    documentVault: 'Document Vault',
-    viewAllDocuments: 'View All Documents',
-    manageFamily: 'Manage Family',
-    assets: 'Assets',
-    debts: 'Debts',
-    documents: 'Documents',
-    familySharing: 'Family Sharing',
-    name: 'Name',
-    category: 'Category',
-    value: 'Value',
-    amount: 'Amount',
-    uploadDocument: 'Upload Document',
-    addFamilyMember: 'Add Family Member',
-    email: 'Email',
-    role: 'Role',
-    edit: 'Edit',
-    delete: 'Delete',
-    searchByEmail: 'Search by email...',
-    allRoles: 'All Roles',
-    viewer: 'Viewer',
-    editor: 'Editor',
-    saveChanges: 'Save Changes',
-    login: 'Login',
-    password: 'Password',
-    asset: 'Asset',
-    debt: 'Debt',
-    date: 'Date',
-    message: 'Message',
-    view: 'View',
-    language: 'Language',
-    currency: 'Currency',
-    onlyPDF: 'Only PDF files are allowed',
-    uploadFile: 'Upload a file',
-    orDragDrop: 'or drag and drop',
-    pdfOnly: 'PDF only',
-    selectAsset: 'Select an asset',
-    noDocuments: 'No documents uploaded',
-    pdfPreview: 'Previewing PDF:',
-    pdfPlaceholder: 'PDF content for',
-    confirmDelete: 'Are you sure you want to delete this?',
-    searchByName: 'Search by name...',
-    allCategories: 'All Categories',
-    realEstate: 'Real Estate',
-    stocks: 'Stocks',
-    cash: 'Cash',
-    other: 'Other',
-    mortgage: 'Mortgage',
-    carLoan: 'Car Loan',
-    creditCard: 'Credit Card',
-    uploadManageDocs: 'Upload and manage your important documents',
-    stayUpdated: 'Stay updated with recent activities',
-    manageFamilyAccess: 'Manage access for family members',
-    for: 'for',
-    noNotifications: 'No notifications available',
-    personalInfo: 'Personal Info',
-    invalidEmail: 'Please enter a valid email address',
-    invalidPassword: 'Please enter a password',
-    accessYourPersonalFile: 'Access your personal file',
-    signInWithGoogle: 'Sign in with Google',
-    signInWithLinkedIn: 'Sign in with LinkedIn',
-    forgotPassword: 'Forgot Password?',
-    personalInformation: 'Personal Informations',
-    children: 'Children',
-    noChildren: 'No children added',
-    nextOfKin: 'Next of Kin',
-    noNextOfKin: 'No next of kin added',
-    birthName: 'Birth Name',
-    usedName: 'Used Name',
-    firstNames: 'First Name(s)',
-    dateOfBirth: 'Date of Birth',
-    placeOfBirth: 'Place of Birth',
-    street: 'Street Address',
-    city: 'City',
-    state: 'State',
-    zip: 'ZIP Code',
-    country: 'Country',
-    phone: 'Phone Number',
-    relationship: 'Relationship',
-    requiredField: 'This field is required',
-    childSaveSuccess: 'Child updated successfully',
-    nextOfKinSaveSuccess: 'Next of kin updated successfully',
-    editChild: 'Edit Child',
-    editNextOfKin: 'Edit Next of Kin',
-    childDetails: 'Child Details',
-    nextOfKinDetails: 'Next of Kin Details',
-    addChild: "Add a child",
-    financialInformation: "Financial Informations",
-    annualIncome: "Annual Income",
-    taxId: 'Tax ID',
-    family: "Family",
-    maritalStatus: "Marital Status",
-    spouse: "Spouse",
-    status: "Status",
-    married: "Married",
-    single: "Single",
-    partnered: "Partnered",
-    divorced: "Divorced",
-    widowed: "Widowed",
-    addNextOfKin: "Add a Next of Kin",
-    cancel: 'Cancel',
-    save: 'Save',
-    personalDetails: "Personal Details",
-    contactInformation: "Contact Informations",
-    firstName: "First Name",
-    lastName: "Last Name",
 
-    bankAccounts: 'Bank Accounts',
-    bankAccount1: 'Bank Account 1',
-    bankName: 'Bank Name',
-    accountType: 'Account Type',
-    accountNumber: 'Account Number',
-    approxBalance: 'Approximate Balance',
-    addBankAccount: 'Add Bank Account',
-  
-    investments: 'Investments',
-    investment1: 'Investment 1',
-    investmentType: 'Investment Type',
-    institution: 'Institution',
-    approxValue: 'Approximate Value',
-    contact: 'Contact',
-    addInvestment: 'Add Investment',
-  
-    safesAndSecureContents: 'Safes and Secure Contents',
-    safe1: 'Safe 1',
-    location: 'Location',
-    locationExample: 'e.g., Bank, Home...',
-    contentDescription: 'Content Description',
-    estimatedValue: 'Estimated Value',
-    accessInformation: 'Access Information',
-    accessInstructions: 'How to access this safe (do not include codes)',
-    addSafe: 'Add Safe',
-    personalDeclaration: "Personal Information Declaration",requiredFields: 'All fields are required',
-    invalidBalance: 'Approximate balance must be a valid number',
-    generateDeclaration: 'Generate Declaration PDF',
-    generating: 'Generating...',
-    declarationGenerated: 'Declaration PDF generated successfully',
-    declarationError: 'Failed to generate declaration PDF',
-  },
-  fr: {
-    welcome: 'Bienvenue',
-    dashboard: "Tableau de bord",
-    logout: 'Se déconnecter',
-    overview: 'Aperçu',
-    netWorth: 'Valeur nette',
-    summary: 'Résumé',
-    totalAssets: 'Actifs totaux',
-    totalDebts: 'Dettes totales',
-    notifications: 'Notifications',
-    familyMembers: 'Membres de la famille',
-    viewAllAssets: 'Voir tous les actifs',
-    viewAllDebts: 'Voir toutes les dettes',
-    viewNotifications: 'Voir les notifications',
-    assetsDebts: 'Actifs & Dettes',
-    recentAssets: 'Actifs récents',
-    recentDebts: 'Dettes récentes',
-    addAsset: 'Ajouter un actif',
-    addDebt: 'Ajouter une dette',
-    documentVault: 'Coffre-fort de documents',
-    viewAllDocuments: 'Voir tous les documents',
-    manageFamily: 'Gérer la famille',
-    assets: 'Actifs',
-    debts: 'Dettes',
-    documents: 'Documents',
-    familySharing: 'Partage familial',
-    name: 'Nom',
-    category: 'Catégorie',
-    value: 'Valeur',
-    amount: 'Montant',
-    uploadDocument: 'Téléverser un document',
-    addFamilyMember: 'Ajouter un membre de la famille',
-    email: 'Email',
-    role: 'Rôle',
-    edit: 'Modifier',
-    delete: 'Supprimer',
-    searchByEmail: 'Rechercher par email...',
-    allRoles: 'Tous les rôles',
-    viewer: 'Lecteur',
-    editor: 'Éditeur',
-    saveChanges: 'Enregistrer les modifications',
-    login: 'Connexion',
-    password: 'Mot de passe',
-    asset: 'Actif',
-    debt: 'Dette',
-    date: 'Date',
-    message: 'Message',
-    view: 'Voir',
-    language: 'Langue',
-    currency: 'Devise',
-    onlyPDF: 'Seuls les fichiers PDF sont autorisés',
-    uploadFile: 'Téléverser un fichier',
-    orDragDrop: 'ou glisser-déposer',
-    pdfOnly: 'PDF uniquement',
-    selectAsset: 'Sélectionner un actif',
-    noDocuments: 'Aucun document téléversé',
-    pdfPreview: 'Aperçu du PDF :',
-    pdfPlaceholder: 'Contenu du PDF pour',
-    confirmDelete: 'Êtes-vous sûr de vouloir supprimer ceci ?',
-    searchByName: 'Rechercher par nom...',
-    allCategories: 'Toutes les catégories',
-    realEstate: 'Immobilier',
-    stocks: 'Actions',
-    cash: 'Argent liquide',
-    other: 'Autre',
-    mortgage: 'Hypothèque',
-    carLoan: 'Prêt automobile',
-    creditCard: 'Carte de crédit',
-    uploadManageDocs: 'Téléversez et gérez vos documents importants',
-    stayUpdated: 'Restez informé des activités récentes',
-    manageFamilyAccess: 'Gérer l’accès des membres de la famille',
-    for: 'pour',
-    noNotifications: 'Aucune notification disponible',
-    personalInfo: 'Informations personnelles',
-    invalidEmail: 'Veuillez entrer une adresse email valide',
-    invalidPassword: 'Veuillez entrer un mot de passe',
-    accessYourPersonalFile: 'Accédez à votre dossier personnel',
-    signInWithGoogle: 'Se connecter avec Google',
-    signInWithLinkedIn: 'Se connecter avec LinkedIn',
-    forgotPassword: 'Mot de passe oublié ?',
-    personalInformation: 'Informations personnelles',
-    children: 'Enfants',
-    noChildren: 'Aucun enfant ajouté',
-    nextOfKin: 'Proche parent',
-    noNextOfKin: 'Aucun proche parent ajouté',
-    birthName: 'Nom de naissance',
-    usedName: 'Nom usuel',
-    firstNames: 'Prénom(s)',
-    dateOfBirth: 'Date de naissance',
-    placeOfBirth: 'Lieu de naissance',
-    street: 'Adresse',
-    city: 'Ville',
-    state: 'Région',
-    zip: 'Code postal',
-    country: 'Pays',
-    phone: 'Numéro de téléphone',
-    relationship: 'Lien de parenté',
-    requiredField: 'Ce champ est requis',
-    childSaveSuccess: 'Enfant mis à jour avec succès',
-    nextOfKinSaveSuccess: 'Proche parent mis à jour avec succès',
-    editChild: 'Modifier l’enfant',
-    editNextOfKin: 'Modifier le proche parent',
-    childDetails: 'Détails de l’enfant',
-    nextOfKinDetails: 'Détails du proche parent',
-    addChild: "Ajouter un enfant",
-    financialInformation: "Informations financières",
-    annualIncome: "Revenu annuel",
-    taxId: 'Identifiant fiscal',
-    family: "Famille",
-    maritalStatus: "Statut matrimonial",
-    spouse: "Conjoint",
-    status: "Statut",
-    addNextOfKin: "Ajouter un proche parent",
-    cancel: 'Annuler',
-    save: 'Enregistrer',
-    personalDetails: "Détails personnels",
-    contactInformation: "Informations de contact",
-    firstName: "Prénom",
-    lastName: "Nom de famille",
-    generateDeclaration: 'Générer le PDF de déclaration',
-    generating: 'Génération en cours...',
-    declarationGenerated: 'PDF de déclaration généré avec succès',
-    declarationError: 'Échec de la génération du PDF de déclaration',
-    bankAccounts: 'Comptes bancaires',
-    accountName: 'Nom du compte',
-    bankName: 'Nom de la banque',
-    accountType: 'Type de compte',
-    accountNumber: 'Numéro de compte',
-    approxBalance: 'Solde approximatif',
-    noBankAccounts: 'Aucun compte bancaire répertorié.',
-    addBankAccount: 'Ajouter un compte bancaire',
-    saveSuccess: 'Informations personnelles enregistrées avec succès',
+  export const AppContext = createContext();
 
-    bankAccountAdded: 'Compte bancaire ajouté avec succès',
-    requiredFields: 'Tous les champs sont requis',
-    invalidBalance: 'Le solde approximatif doit être un nombre valide',
-  
-    investments: 'Investissements',
-    investment1: 'Investissement 1',
-    investmentType: "Type d'investissement",
-    institution: 'Institution',
-    approxValue: 'Valeur approximative',
-    contact: 'Contact',
-    addInvestment: 'Ajouter un investissement',
-  
-    safesAndSecureContents: 'Coffres-forts et contenus sécurisés',
-    safe1: 'Coffre-fort 1',
-    location: 'Emplacement',
-    locationExample: 'Ex: Banque, domicile...',
-    contentDescription: 'Description du contenu',
-    estimatedValue: 'Valeur estimée',
-    accessInformation: "Informations d'accès",
-    accessInstructions: 'Comment accéder à ce coffre (ne pas inclure de codes)',
-    addSafe: 'Ajouter un coffre-fort',
+  export const AppProvider = ({ children }) => {
+    // Initialize from localStorage or default values
+    const [language, setLanguage] = useState(() => {
+      const savedLanguage = localStorage.getItem('language');
+      return savedLanguage && ['en', 'fr'].includes(savedLanguage) ? savedLanguage : 'fr';
+    });
+    const [currency, setCurrency] = useState(() => {
+      const savedCurrency = localStorage.getItem('currency');
+      return savedCurrency && ['USD', 'EUR', 'KES'].includes(savedCurrency) ? savedCurrency : 'EUR';
+    });
 
-  }
-  
-};
+    // Save to localStorage on change
+    useEffect(() => {
+      localStorage.setItem('language', language);
+    }, [language]);
 
-// Conversion rates (USD base)
-const conversionRates = {
-  EUR: { USD: 1.176, EUR: 1, KES: 129.41 },
-  USD: { USD: 1, EUR: 0.85, KES: 110 },
-  KES: { USD: 0.00909, EUR: 0.00773, KES: 1 },
-};
+    useEffect(() => {
+      localStorage.setItem('currency', currency);
+    }, [currency]);
 
-// Currency symbols
-const currencySymbols = {
-  USD: '$',
-  EUR: '€',
-  KES: 'KSh',
-};
+    const t = (key) => translations[language][key] || key;
 
-export const AppContext = createContext();
+    const convertCurrency = (amount, fromCurrency) => {
+      if (typeof amount !== 'number' || !fromCurrency || !conversionRates[fromCurrency]) return 0;
+      const rate = conversionRates[fromCurrency][currency];
+      return Number((amount * rate).toFixed(2));
+    };
 
-export const AppProvider = ({ children }) => {
-  // Initialize from localStorage or default values
-  const [language, setLanguage] = useState(() => {
-    const savedLanguage = localStorage.getItem('language');
-    return savedLanguage && ['en', 'fr'].includes(savedLanguage) ? savedLanguage : 'en';
-  });
-  const [currency, setCurrency] = useState(() => {
-    const savedCurrency = localStorage.getItem('currency');
-    return savedCurrency && ['USD', 'EUR', 'KES'].includes(savedCurrency) ? savedCurrency : 'USD';
-  });
+    const formatCurrency = (amount, fromCurrency) => {
+      const converted = convertCurrency(amount, fromCurrency);
+      return `${currencySymbols[currency]}${converted.toLocaleString()}`;
+    };
 
-  // Save to localStorage on change
-  useEffect(() => {
-    localStorage.setItem('language', language);
-  }, [language]);
-
-  useEffect(() => {
-    localStorage.setItem('currency', currency);
-  }, [currency]);
-
-  const t = (key) => translations[language][key] || key;
-
-  const convertCurrency = (amount, fromCurrency = 'EUR') => {
-    if (typeof amount !== 'number') return 0;
-    const rate = conversionRates[fromCurrency][currency];
-    return Number((amount * rate).toFixed(2));
-  };
-
-  const formatCurrency = (amount, fromCurrency = 'EUR') => {
-    const converted = convertCurrency(amount, fromCurrency);
-    return `${currencySymbols[currency]}${converted.toLocaleString()}`;
-  };
 
   return (
     <AppContext.Provider value={{ language, setLanguage, currency, setCurrency, t, formatCurrency }}>

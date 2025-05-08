@@ -35,11 +35,10 @@ const Sidebar = ({ activeLink, onLogout }) => {
         } md:translate-x-0`}
       >
       {/* Logo and Branding */}
-      <div className="p-6 flex items-center space-x-3">
-        <img src="/auprea.png" alt="Auprea Logo" className="w-10 h-10" />
+      <div className="p-6 items-center space-x-3">
+        <img src="/auprea.png" alt="Auprea Logo"  className="" />
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Auprea</h1>
-          <p className="text-sm text-gray-500">Simplifier la richesse</p>
+          <p className="text-sm text-gray-500 mt-2">Tout le monde a le droit de transmettre un patrimoine</p>
         </div>
       </div>
         <nav className="mt-4">
