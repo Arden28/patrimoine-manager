@@ -74,7 +74,7 @@ const Login = ({ onLogin }) => {
         <div className="max-w-md w-full space-y-6">
           <div className="text-left mb-4">
             <svg
-              className="h-10 w-10 text-teal-600"
+              className="h-10 w-10 text-primary-600"
               fill="currentColor"
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
@@ -95,7 +95,7 @@ const Login = ({ onLogin }) => {
           </div>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <div className="flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
+              <div className="flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-secondary-500">
                 <svg
                   className="h-5 w-5 text-gray-400 mr-2"
                   fill="none"
@@ -123,7 +123,7 @@ const Login = ({ onLogin }) => {
               </div>
             </div>
             <div>
-              <div className="flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-teal-500">
+              <div className="flex items-center border border-gray-300 rounded-lg p-2 bg-white/80 focus-within:ring-2 focus-within:ring-secondary-500">
                 <svg
                   className="h-5 w-5 text-gray-400 mr-2"
                   fill="none"
@@ -158,7 +158,7 @@ const Login = ({ onLogin }) => {
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-200"
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-200"
               >
                 {t('login')?.[language] || 'Login'}
               </button>
@@ -214,7 +214,7 @@ const Login = ({ onLogin }) => {
             <div className="text-center">
               <button
                 onClick={handleForgotPassword}
-                className="text-teal-600 hover:text-teal-700 text-sm font-medium transition-colors duration-200"
+                className="text-primary-600 hover:text-primary-700 text-sm font-medium transition-colors duration-200"
               >
                 {t('forgotPassword')?.[language] || 'Forgot Password?'}
               </button>
@@ -241,8 +241,8 @@ const Login = ({ onLogin }) => {
                 key={index}
                 onClick={() => setCurrentImage(index)}
                 className={`w-3 h-3 rounded-full ${
-                  index === currentImage ? 'bg-teal-500' : 'bg-gray-200'
-                } hover:bg-teal-400 transition-colors duration-200`}
+                  index === currentImage ? 'bg-primary' : 'bg-gray-200'
+                } hover:bg-primary-400 transition-colors duration-200`}
               />
             ))}
           </div>

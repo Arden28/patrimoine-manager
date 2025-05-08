@@ -82,7 +82,7 @@ const DebtsPage = ({ user, debts, onAddDebt, onEditDebt, onDeleteDebt, onLogout 
               </div>
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+                className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
               >
                 {t('addDebt')}
               </button>
@@ -103,7 +103,7 @@ const DebtsPage = ({ user, debts, onAddDebt, onEditDebt, onDeleteDebt, onLogout 
                   <div className="flex-1 text-right space-x-2">
                     <button
                       onClick={() => handleEditClick(debt)}
-                      className="text-teal-500 hover:text-teal-600 font-medium"
+                      className="text-primary-500 hover:text-primary-600 font-medium"
                     >
                       {t('edit')}
                     </button>
@@ -157,7 +157,7 @@ const DebtsPage = ({ user, debts, onAddDebt, onEditDebt, onDeleteDebt, onLogout 
           </div>
           <button
             type="submit"
-            className="w-full bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
+            className="w-full bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200"
           >
             {t('addDebt')}
           </button>
@@ -200,7 +200,7 @@ const DebtsPage = ({ user, debts, onAddDebt, onEditDebt, onDeleteDebt, onLogout 
           </div>
           <button
             type="submit"
-            className="w-full bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
+            className="w-full bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200"
           >
             {t('saveChanges')}
           </button>

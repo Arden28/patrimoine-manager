@@ -310,7 +310,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddChild, onAddNextOfKin, onLo
               </h2>
               <button
                 onClick={handleEditClick}
-                className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+                className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
               >
                 {t('edit')?.[language] || 'Edit'}
               </button>
@@ -1122,7 +1122,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddChild, onAddNextOfKin, onLo
                 <div className="flex justify-center mt-4">
                   <button
                     onClick={() => setIsAddChildModalOpen(true)}
-                    className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+                    className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
                   >
                     {t('addChild')?.[language] || 'Add Child'}
                   </button>
@@ -1158,7 +1158,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddChild, onAddNextOfKin, onLo
               <div className="flex justify-center mt-4">
                 <button
                   onClick={() => setIsAddNextOfKinModalOpen(true)}
-                  className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+                  className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
                 >
                   {t('addNextOfKin')?.[language] || 'Add Next of Kin'}
                 </button>
@@ -1999,7 +1999,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddChild, onAddNextOfKin, onLo
           </button>
           <button
             type="submit"
-            className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+            className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
           >
             {t('save')?.[language] || 'Save'}
           </button>
@@ -2377,7 +2377,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddChild, onAddNextOfKin, onLo
           </button>
           <button
             type="submit"
-            className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+            className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
           >
             {t('save')?.[language] || 'Save'}
           </button>

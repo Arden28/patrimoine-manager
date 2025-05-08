@@ -85,7 +85,7 @@ const AssetsPage = ({ user, assets, onAddAsset, onEditAsset, onDeleteAsset, onLo
               </div>
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+                className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
               >
                 {t('addAsset')}
               </button>
@@ -107,7 +107,7 @@ const AssetsPage = ({ user, assets, onAddAsset, onEditAsset, onDeleteAsset, onLo
                     <div className="flex-1 text-right space-x-2">
                       <button
                         onClick={() => handleEditClick(asset)}
-                        className="text-teal-500 hover:text-teal-600 font-medium"
+                        className="text-primary-500 hover:text-primary-600 font-medium"
                       >
                         {t('edit')}
                       </button>
@@ -171,7 +171,7 @@ const AssetsPage = ({ user, assets, onAddAsset, onEditAsset, onDeleteAsset, onLo
           </div>
           <button
             type="submit"
-            className="w-full bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
+            className="w-full bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200"
           >
             {t('addAsset')}
           </button>
@@ -214,7 +214,7 @@ const AssetsPage = ({ user, assets, onAddAsset, onEditAsset, onDeleteAsset, onLo
           </div>
           <button
             type="submit"
-            className="w-full bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
+            className="w-full bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200"
           >
             {t('saveChanges')}
           </button>

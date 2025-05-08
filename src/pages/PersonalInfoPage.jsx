@@ -470,13 +470,13 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
               </h2>
               <button
                 onClick={() => handleGenerateDeclaration(formData, t, language, setSuccess, setError)}
-                className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+                className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
                 >
                 {t('generateDeclaration')}
                 </button>
               <button
                 onClick={handleEditClick}
-                className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+                className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
               >
                 {t('edit')}
               </button>
@@ -886,7 +886,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 <div className="flex justify-center mt-4">
                   <button
                     onClick={() => setIsAddBankAccountModalOpen(true)}
-                    className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+                    className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
                   >
                     {t('addBankAccount')}
                   </button>
@@ -1320,7 +1320,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
                 <div className="flex justify-center mt-4">
                   <button
                     onClick={() => setIsAddChildModalOpen(true)}
-                    className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+                    className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
                   >
                     {t('addChild')}
                   </button>
@@ -1356,7 +1356,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
               <div className="flex justify-center mt-4">
                 <button
                   onClick={() => setIsAddNextOfKinModalOpen(true)}
-                  className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+                  className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
                 >
                   {t('addNextOfKin')}
                 </button>
@@ -2198,7 +2198,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
           </button>
           <button
             type="submit"
-            className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+            className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
           >
             {t('save')}
           </button>
@@ -2383,7 +2383,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </button>
             <button
                 type="submit"
-                className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+                className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
             >
                 {t('save')}
             </button>
@@ -2762,7 +2762,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
           </button>
           <button
             type="submit"
-            className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+            className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
           >
             {t('save')}
           </button>
@@ -3169,7 +3169,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </button>
             <button
               type="submit"
-              className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+              className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
             >
               {t('save')}
             </button>
@@ -3547,7 +3547,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </button>
             <button
               type="submit"
-              className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+              className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
             >
               {t('save')}
             </button>
@@ -3953,7 +3953,7 @@ const PersonalInfoPage = ({ user, onUpdateUser, onAddBankAccount, onAddChild, on
             </button>
             <button
               type="submit"
-              className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+              className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
             >
               {t('save')}
             </button>

@@ -102,21 +102,21 @@ const Dashboard = ({
               onChange={(e) => setLanguage(e.target.value)}
               className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 hover:bg-gray-50"
             >
-              <option value="en">🇺🇳 English</option>
               <option value="fr">🇫🇷 Français</option>
+              <option value="en">🇺🇳 English</option>
             </select>
             <select
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
               className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 hover:bg-gray-50"
             >
-              <option value="USD">USD $</option>
               <option value="EUR">EUR €</option>
+              <option value="USD">USD $</option>
               <option value="KES">KES KSh</option>
             </select>
-            <button
+            {/* <button
               onClick={handleDownloadDeclaration}
-              className="text-gray-600 hover:text-teal-600 transition-colors duration-200"
+              className="text-gray-600 hover:text-primary-600 transition-colors duration-200"
               title={t('downloadDeclaration')}
             >
               <svg
@@ -133,7 +133,7 @@ const Dashboard = ({
                   d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                 />
               </svg>
-            </button>
+            </button> */}
             <button
               onClick={onLogout}
               className="text-gray-600 hover:text-gray-800 transition-colors duration-200"
@@ -159,15 +159,15 @@ const Dashboard = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <div className="bg-white p-6 rounded-xl shadow-sm">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('netWorth')}</h2>
-              <p className="text-3xl font-bold text-teal-500">{formatCurrency(netWorth)}</p>
+              <p className="text-3xl font-bold text-primary">{formatCurrency(netWorth)}</p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-sm">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('totalAssets')}</h2>
-              <p className="text-3xl font-bold text-teal-500">{formatCurrency(totalAssets)}</p>
+              <p className="text-3xl font-bold text-primary">{formatCurrency(totalAssets)}</p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-sm">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('totalDebts')}</h2>
-              <p className="text-3xl font-bold text-teal-500">{formatCurrency(totalDebts)}</p>
+              <p className="text-3xl font-bold text-primary">{formatCurrency(totalDebts)}</p>
             </div>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -176,7 +176,7 @@ const Dashboard = ({
                 <h2 className="text-xl font-semibold text-gray-900">{t('recentAssets')}</h2>
                 <button
                   onClick={() => setIsAssetModalOpen(true)}
-                  className="text-teal-500 hover:text-teal-600 font-medium"
+                  className="text-primary hover:text-primary-600 font-medium"
                 >
                   {t('addAsset')}
                 </button>
@@ -205,7 +205,7 @@ const Dashboard = ({
                 <h2 className="text-xl font-semibold text-gray-900">{t('recentDebts')}</h2>
                 <button
                   onClick={() => setIsDebtModalOpen(true)}
-                  className="text-teal-500 hover:text-teal-600 font-medium"
+                  className="text-primary hover:text-primary-600 font-medium"
                 >
                   {t('addDebt')}
                 </button>
@@ -232,7 +232,7 @@ const Dashboard = ({
             <div className="bg-white p-6 rounded-xl shadow-sm">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold text-gray-900">{t('notifications')}</h2>
-                <a href="/notifications" className="text-teal-500 hover:text-teal-600 font-medium">
+                <a href="/notifications" className="text-primary hover:text-primary-600 font-medium">
                   {t('viewNotifications')}
                 </a>
               </div>
@@ -254,7 +254,7 @@ const Dashboard = ({
                 <h2 className="text-xl font-semibold text-gray-900">{t('familyMembers')}</h2>
                 <button
                   onClick={() => setIsFamilyModalOpen(true)}
-                  className="text-teal-500 hover:text-teal-600 font-medium"
+                  className="text-primary hover:text-primary-600 font-medium"
                 >
                   {t('addFamilyMember')}
                 </button>
@@ -318,7 +318,7 @@ const Dashboard = ({
           </div>
           <button
             type="submit"
-            className="w-full bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
+            className="w-full bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200"
           >
             {t('addAsset')}
           </button>
@@ -361,7 +361,7 @@ const Dashboard = ({
           </div>
           <button
             type="submit"
-            className="w-full bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
+            className="w-full bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200"
           >
             {t('addDebt')}
           </button>
@@ -397,7 +397,7 @@ const Dashboard = ({
           </div>
           <button
             type="submit"
-            className="w-full bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
+            className="w-full bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200"
           >
             {t('uploadDocument')}
           </button>
@@ -438,7 +438,7 @@ const Dashboard = ({
           </div>
           <button
             type="submit"
-            className="w-full bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
+            className="w-full bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200"
           >
             {t('addFamilyMember')}
           </button>

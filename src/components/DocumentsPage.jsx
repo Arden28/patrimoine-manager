@@ -73,7 +73,7 @@ const DocumentsPage = ({ user, assets, onUploadDocument, onDeleteDocument, onLog
               <h2 className="text-2xl font-semibold text-gray-900">{t('documents')}</h2>
               <button
                 onClick={() => setIsUploadModalOpen(true)}
-                className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+                className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
               >
                 {t('uploadDocument')}
               </button>
@@ -90,7 +90,7 @@ const DocumentsPage = ({ user, assets, onUploadDocument, onDeleteDocument, onLog
                       >
                         <div className="flex items-center">
                           <svg
-                            className="h-5 w-5 text-teal-500 mr-2"
+                            className="h-5 w-5 text-primary-500 mr-2"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -109,7 +109,7 @@ const DocumentsPage = ({ user, assets, onUploadDocument, onDeleteDocument, onLog
                         <div className="space-x-2">
                           <button
                             onClick={() => handleViewDocument(document)}
-                            className="text-teal-500 hover:text-teal-600 font-medium"
+                            className="text-primary-500 hover:text-primary-600 font-medium"
                           >
                             {t('view')}
                           </button>
@@ -158,7 +158,7 @@ const DocumentsPage = ({ user, assets, onUploadDocument, onDeleteDocument, onLog
             <div className="mt-1 flex items-center justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-teal-500 transition-colors duration-200">
               <div className="space-y-1 text-center">
                 <svg
-                  className="mx-auto h-12 w-12 text-teal-500"
+                  className="mx-auto h-12 w-12 text-primary-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -174,7 +174,7 @@ const DocumentsPage = ({ user, assets, onUploadDocument, onDeleteDocument, onLog
                 <div className="flex text-sm text-gray-600">
                   <label
                     htmlFor="file-upload"
-                    className="relative cursor-pointer bg-white rounded-md font-medium text-teal-500 hover:text-teal-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500"
+                    className="relative cursor-pointer bg-white rounded-md font-medium text-primary-500 hover:text-primary-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500"
                   >
                     <span>{t('uploadFile')}</span>
                     <input
@@ -196,7 +196,7 @@ const DocumentsPage = ({ user, assets, onUploadDocument, onDeleteDocument, onLog
           </div>
           <button
             type="submit"
-            className="w-full bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
+            className="w-full bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200"
           >
             {t('uploadDocument')}
           </button>

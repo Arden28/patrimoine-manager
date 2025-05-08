@@ -27,13 +27,13 @@ import { conversionRates, currencySymbols } from './data/currencyRates';
 
     const t = (key) => translations[language][key] || key;
 
-    const convertCurrency = (amount, fromCurrency) => {
+    const convertCurrency = (amount, fromCurrency = 'EUR') => {
       if (typeof amount !== 'number' || !fromCurrency || !conversionRates[fromCurrency]) return 0;
       const rate = conversionRates[fromCurrency][currency];
       return Number((amount * rate).toFixed(2));
     };
 
-    const formatCurrency = (amount, fromCurrency) => {
+    const formatCurrency = (amount, fromCurrency = 'EUR') => {
       const converted = convertCurrency(amount, fromCurrency);
       return `${currencySymbols[currency]}${converted.toLocaleString()}`;
     };

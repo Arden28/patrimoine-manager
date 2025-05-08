@@ -89,7 +89,7 @@ const FamilySharingPage = ({ user, familyMembers, onAddFamilyMember, onEditFamil
               </div>
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium"
+                className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium"
               >
                 Add Family Member
               </button>
@@ -110,7 +110,7 @@ const FamilySharingPage = ({ user, familyMembers, onAddFamilyMember, onEditFamil
                   <div className="flex-1 text-right space-x-2">
                     <button
                       onClick={() => handleEditClick(member)}
-                      className="text-teal-500 hover:text-teal-600 font-medium"
+                      className="text-primary-500 hover:text-primary-600 font-medium"
                     >
                       Edit
                     </button>
@@ -163,7 +163,7 @@ const FamilySharingPage = ({ user, familyMembers, onAddFamilyMember, onEditFamil
           </div>
           <button
             type="submit"
-            className="w-full bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
+            className="w-full bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200"
           >
             Add Family Member
           </button>
@@ -205,7 +205,7 @@ const FamilySharingPage = ({ user, familyMembers, onAddFamilyMember, onEditFamil
           </div>
           <button
             type="submit"
-            className="w-full bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200"
+            className="w-full bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200"
           >
             Save Changes
           </button>
